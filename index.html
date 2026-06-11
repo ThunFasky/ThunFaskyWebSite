@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ThunFaskyのサイト</title>
+    <title>ThunFasky.com</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
     <script type="importmap">
     {
@@ -17,7 +17,9 @@
     </script>
 
     <style>
-        /* --- 0. フォントの読み込み設定 --- */
+        /* ===========================================
+           0. フォント読み込み（既存のまま）
+        =========================================== */
         @font-face {
             font-family: 'MyShikakuFont';
             src: url('fonts/Shikakufuto_ver20251224.ttf') format('truetype');
@@ -27,460 +29,1064 @@
             src: url('fonts/x14y20pxScoreDozer.ttf') format('truetype');
         }
 
-        /* --- デザイン設定 (CSS変数) --- */
+        /* ===========================================
+           1. デザイントークン
+           - 大見出し / サイト名 = オレンジ
+           - それ以外の文字 = 白
+           - 背景 = グレー + 赤青橙紫のグラデ
+        =========================================== */
         :root {
-            --bg-color: #1a1a1a;
-            --text-color: #e0e0e0;
-            --accent-color: #FFB300; 
-            --card-bg: #2d2d2d;
-            --section-gap: 80px;
+            --bg-gray: #2c2c31;
+            --bg-gray-2: #232327;
+            --orange: #FF7A1C;
+            --orange-deep: #E85D04;
+            --white: #ffffff;
+            --w70: rgba(255,255,255,0.7);
+            --w45: rgba(255,255,255,0.45);
+            --w25: rgba(255,255,255,0.25);
+            --line: rgba(255,255,255,0.35);
+            --tint-purple: rgba(123, 47, 190, 0.22);
+            --tint-blue:   rgba(30, 111, 255, 0.16);
+            --tint-red:    rgba(255, 59, 59, 0.12);
+            --tint-orange: rgba(255, 122, 28, 0.18);
+            --section-gap: 90px;
+            --font-pixel: 'MyShikakuFont', sans-serif;
+            --font-score: 'MyScoreFont', 'Courier New', monospace;
+            --font-body: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { animation: none !important; transition: none !important; }
         }
 
         body {
-            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: var(--font-body);
+            background-color: var(--bg-gray);
+            color: var(--white);
             margin: 0;
             padding: 0;
-            line-height: 1.6;
+            line-height: 1.7;
+            overflow-x: hidden;
         }
 
-        /* --- ヘッダー（バナー） --- */
-        header {
-            text-align: center;
-            padding: 5px 20px 25px; 
+        a { color: var(--white); }
+
+        /* ===========================================
+           2. 背景レイヤー（グレー + グラデ彩り + FUI）
+        =========================================== */
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background:
+                radial-gradient(ellipse 60% 45% at 85% 0%,   var(--tint-orange), transparent 70%),
+                radial-gradient(ellipse 55% 40% at 0% 55%,   var(--tint-purple), transparent 70%),
+                radial-gradient(ellipse 50% 35% at 100% 80%, var(--tint-blue),   transparent 70%),
+                radial-gradient(ellipse 45% 30% at 30% 100%, var(--tint-red),    transparent 70%),
+                linear-gradient(160deg, #36363c 0%, var(--bg-gray) 45%, var(--bg-gray-2) 100%);
+        }
+        /* うっすらドットグリッド */
+        .bg-layer::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+
+        /* --- FUI 装飾レイヤー（クリック不可） --- */
+        .fui-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            font-family: var(--font-score);
+        }
+        .fui-panel {
+            position: absolute;
+            border: 1px solid var(--w25);
+            padding: 10px 14px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: var(--w70);
+            background: rgba(0,0,0,0.15);
+            clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+        }
+        .fui-panel .fui-label { font-size: 10px; color: var(--w45); display: block; margin-bottom: 2px; }
+        .fui-panel .fui-value { color: var(--orange); font-size: 15px; line-height: 1.2; }
+        .fui-panel .fui-sub { color: var(--w70); font-size: 10px; }
+
+        .fui-time      { top: 70px; right: 24px; min-width: 130px; }
+        .fui-sys       { top: 180px; left: 18px; min-width: 140px; }
+        .fui-node      { top: 45%; right: 18px; }
+        .fui-stream    { bottom: 110px; left: 18px; min-width: 140px; }
+        .fui-server    { bottom: 40px; right: 24px; min-width: 150px; }
+        .fui-loading   {
+            position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+            font-size: 10px; color: var(--w45); letter-spacing: 2px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .fui-loadbar {
+            width: 140px; height: 8px; border: 1px solid var(--w25); position: relative; overflow: hidden;
+        }
+        .fui-loadbar i {
+            position: absolute; inset: 1px auto 1px 1px; width: 62%;
+            background: repeating-linear-gradient(90deg, var(--orange) 0 4px, transparent 4px 6px);
+        }
+        .fui-spark { display: block; margin-top: 6px; }
+        .fui-bars { display: flex; align-items: flex-end; gap: 2px; height: 22px; margin-top: 6px; }
+        .fui-bars i { width: 4px; background: var(--orange); opacity: 0.85; }
+
+        /* ＋マーク・斜線などの散らし */
+        .fui-plus { position: absolute; color: var(--w25); font-size: 16px; }
+        .fui-hatch {
+            position: absolute; width: 70px; height: 10px;
+            background: repeating-linear-gradient(115deg, var(--orange) 0 3px, transparent 3px 8px);
+            opacity: 0.55;
+        }
+        .fui-dots {
+            position: absolute; width: 80px; height: 56px;
+            background-image: radial-gradient(var(--orange) 1.2px, transparent 1.2px);
+            background-size: 10px 10px;
+            opacity: 0.35;
+        }
+        .fui-line-v { position: absolute; width: 1px; height: 120px; background: linear-gradient(var(--w25), transparent); }
+
+        /* スマホでは数を絞って邪魔にならないように */
+        @media (max-width: 760px) {
+            .fui-sys, .fui-node, .fui-stream, .fui-loading, .fui-line-v { display: none; }
+            .fui-time { top: 64px; right: 12px; transform: scale(0.85); transform-origin: top right; }
+            .fui-server { bottom: 16px; right: 12px; transform: scale(0.85); transform-origin: bottom right; }
+        }
+
+        /* ===========================================
+           3. ヒーロー（4枚目画像のイメージ）
+        =========================================== */
+        .hero {
             position: relative;
-            background-color: #FF9800;
-            background-image: 
-                radial-gradient(at 0% 0%, #FFF59D 0px, transparent 55%),
-                radial-gradient(at 100% 0%, #FFB74D 0px, transparent 50%),
-                radial-gradient(at 100% 100%, #F4511E 0px, transparent 55%),
-                radial-gradient(at 0% 100%, #FFD54F 0px, transparent 50%),
-                radial-gradient(at 50% 50%, #FF7043 0px, transparent 60%);
-            border-bottom: 3px solid #E65100;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .banner-img {
-            max-width: 256px !important;
-            max-height: 256px !important;
-            width: auto;
-            height: auto;
-            display: block;
-            border: none !important;
-            box-shadow: none !important;
-            margin-bottom: -5px;
-            object-fit: contain;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            color: #fff;
-            text-shadow: 2px 2px 3px rgba(0,0,0,0.3);
-            font-weight: normal;
-            font-family: 'MyShikakuFont', sans-serif; 
-        }
-
-        /* --- コンテンツエリア --- */
-        .container {
-            max-width: 900px;
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 90px 24px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            min-height: 62vh;
         }
-
-        section {
-            margin-bottom: var(--section-gap);
+        .hero-title {
+            font-family: var(--font-score);
+            font-size: clamp(2.4rem, 7vw, 4.6rem);
+            color: var(--orange);
+            text-shadow: 0 4px 18px rgba(232, 93, 4, 0.45);
+            margin: 0;
+            line-height: 1.05;
+            letter-spacing: 1px;
         }
-
-        .container img:not(.banner-img), 
-        .container video, 
-        .container iframe,
-        .main-img-box {
-            box-sizing: border-box;
-            border: 1.5px solid var(--accent-color);
-            border-radius: 4px;
+        .hero-title small {
+            display: block;
+            font-family: var(--font-pixel);
+            font-size: clamp(0.9rem, 2.4vw, 1.2rem);
+            color: var(--white);
+            letter-spacing: 4px;
+            margin-top: 14px;
         }
-
-        /* iframeのボーダー調整 */
-        iframe.google-form {
-            border: 1.5px solid var(--accent-color) !important;
+        .hero .window { width: min(380px, 88vw); }
+        .hero .window-body { padding: 18px; }
+        .hero .window-body img {
+            display: block;
             width: 100%;
-            height: 600px;
-            background-color: #fff;
+            max-width: 280px;
+            margin: 0 auto;
+            filter: drop-shadow(0 0 0 transparent);
         }
 
-        h2 {
-            border-left: 5px solid var(--accent-color);
-            padding-left: 15px;
-            margin-top: 0;
-            margin-bottom: 30px;
-            font-size: 1.8rem;
-            background: linear-gradient(90deg, #2d2d2d, transparent);
-            padding-top: 5px;
-            padding-bottom: 5px;
-            font-weight: normal;
-            font-family: 'MyShikakuFont', sans-serif;
+        /* ===========================================
+           4. ウィンドウ部品
+           - 白いタイトルバー + 右端に □（最大化）と ×
+           - 中身はオレンジ塗りつぶし、上に乗る要素は白
+        =========================================== */
+        .window {
+            background: linear-gradient(150deg, var(--orange) 0%, var(--orange-deep) 100%);
+            border: 1px solid rgba(255,255,255,0.55);
+            box-shadow: 10px 10px 0 rgba(0,0,0,0.35), 0 0 30px rgba(255,122,28,0.18);
         }
+        .window-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--white);
+            color: #222;
+            padding: 6px 10px;
+            font-family: var(--font-score);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            user-select: none;
+        }
+        .window-bar .win-title { display: flex; align-items: center; gap: 8px; }
+        .window-bar .win-title::before {
+            content: '';
+            width: 9px; height: 9px;
+            background: var(--orange);
+        }
+        .win-controls { display: flex; gap: 6px; }
+        .win-btn {
+            width: 22px; height: 22px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1.5px solid #222;
+            background: transparent;
+            color: #222;
+            cursor: pointer;
+            font-family: var(--font-score);
+            font-size: 13px;
+            line-height: 1;
+            padding: 0;
+            transition: 0.15s;
+        }
+        .win-btn:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
+        .win-btn.win-max::before {
+            content: '';
+            width: 9px; height: 9px;
+            border: 1.5px solid currentColor;
+            display: block;
+        }
+        .window-body { padding: 25px; color: var(--white); }
+        .window.collapsed .window-body { display: none; }
+
+        /* オレンジの上に乗る要素は白で統一 */
+        .window-body img, .window-body video, .window-body iframe {
+            border: 1.5px solid var(--white);
+        }
+        .window-body a { color: var(--white); }
+
+        /* ===========================================
+           5. コンテンツレイアウト
+        =========================================== */
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 20px 80px;
+            position: relative;
+        }
+        section { margin-bottom: var(--section-gap); position: relative; }
+
+        /* セクション見出し：オレンジ + FUIブラケット */
+        .sec-head { margin-bottom: 34px; position: relative; }
+        .sec-eyebrow {
+            font-family: var(--font-score);
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            color: var(--w45);
+            display: block;
+            margin-bottom: 6px;
+        }
+        h2 {
+            font-family: var(--font-pixel);
+            font-weight: normal;
+            font-size: 2rem;
+            color: var(--orange);
+            margin: 0;
+            display: inline-block;
+            padding: 6px 18px;
+            position: relative;
+            text-shadow: 0 0 16px rgba(255,122,28,0.35);
+        }
+        /* コーナーブラケット */
+        h2::before, h2::after {
+            content: '';
+            position: absolute;
+            width: 12px; height: 12px;
+        }
+        h2::before { top: 0; left: 0; border-top: 2px solid var(--orange); border-left: 2px solid var(--orange); }
+        h2::after { bottom: 0; right: 0; border-bottom: 2px solid var(--orange); border-right: 2px solid var(--orange); }
 
         h3 {
-            color: var(--accent-color);
-            margin-top: 40px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 5px;
-            display: inline-block;
+            font-family: var(--font-pixel);
+            font-weight: normal;
+            color: var(--white);
+            margin: 44px 0 16px;
             font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        h3::before { content: ''; width: 8px; height: 8px; background: var(--orange); flex: none; }
 
         h4 {
             margin: 0 0 10px 0;
-            font-size: 1.4rem;
-            color: #fff;
+            font-size: 1.3rem;
+            color: var(--white);
             font-weight: normal;
-            font-family: 'MyShikakuFont', sans-serif;
+            font-family: var(--font-pixel);
         }
 
-        /* --- リンクボタン --- */
-        .link-container { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 20px; }
+        p { color: var(--white); }
+
+        /* --- リンクボタン（白基調 → hoverでオレンジ） --- */
+        .link-container { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 20px; }
         .btn-link {
             display: flex;
             align-items: center;
             gap: 10px;
-            background-color: #222;
-            color: #bbb;
-            padding: 10px 20px;
+            background: transparent;
+            color: var(--white);
+            padding: 10px 22px;
             text-decoration: none;
-            border-radius: 4px;
-            transition: 0.3s;
-            border: 1px solid #444;
+            border: 1px solid var(--line);
             font-size: 0.9rem;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.2); 
+            font-family: var(--font-score);
+            letter-spacing: 1px;
+            transition: 0.25s;
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+            position: relative;
         }
         .btn-link:hover {
-            border-color: var(--accent-color);
+            background: var(--orange);
+            border-color: var(--orange);
             color: #fff;
-            background-color: #333;
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px rgba(255, 179, 0, 0.2);
+            box-shadow: 0 0 18px rgba(255,122,28,0.5);
         }
 
-        /* --- 誕生日セクション --- */
-        .birthday-container {
+        /* ===========================================
+           6. 誕生日カウントダウン
+        =========================================== */
+        .birthday-window { margin-top: 28px; }
+        .birthday-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: var(--card-bg);
-            padding: 20px 30px;
-            border-radius: 8px;
-            box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.4);
-            border: 1.5px solid var(--accent-color);
-            margin-top: 25px;
+            gap: 20px;
+            flex-wrap: wrap;
         }
-
-        .cake-box { 
-            width: 150px; 
-            height: 150px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
+        .cake-box {
+            width: 150px; height: 150px;
+            display: flex; justify-content: center; align-items: center;
             overflow: visible;
-            background: transparent;
             position: relative;
+            flex: none;
         }
-        
         #cake-3d-canvas {
             width: 100% !important;
             height: 100% !important;
-            image-rendering: pixelated; 
-            filter: drop-shadow(0px 0px 2px var(--accent-color)) drop-shadow(0px 0px 2px var(--accent-color));
+            image-rendering: pixelated;
+            border: none !important;
+            filter: drop-shadow(0 0 3px var(--white));
         }
+        .countdown-info { text-align: right; flex: 1; min-width: 220px; }
+        .current-age {
+            font-size: 1.05rem;
+            color: var(--white);
+            margin-bottom: 6px;
+            opacity: 0.95;
+        }
+        #timer {
+            font-size: 1.9rem;
+            color: var(--white);
+            letter-spacing: 2px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .font-digital { font-family: var(--font-score); letter-spacing: 1px; font-weight: normal; }
 
-        .countdown-info { text-align: right; }
-        .current-age { font-size: 1.1rem; color: var(--accent-color); margin-bottom: 5px; }
-        #timer { font-size: 1.8rem; color: #fff; letter-spacing: 2px; }
+        /* ===========================================
+           7. スペック表（オレンジ窓の中＝白文字白罫線）
+        =========================================== */
+        .spec-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; font-family: var(--font-score); }
+        .spec-table th, .spec-table td { text-align: left; padding: 8px 0; border-bottom: 1px solid var(--line); }
+        .spec-table th { width: 110px; color: var(--white); opacity: 0.85; }
 
-        /* --- デバイスセクション --- */
-        .spec-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; font-family: 'MyScoreFont', monospace; font-weight: normal; }
-        .spec-table th, .spec-table td { text-align: left; padding: 8px 0; border-bottom: 1px solid #444; }
-        .spec-table th { width: 110px; color: var(--accent-color); }
-
-        /* --- 基本のグリッド（アプリ用） --- */
+        /* ===========================================
+           8. グリッド類
+        =========================================== */
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
-        .media-item {
-            background-color: var(--card-bg);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.4);
-            border: 1px solid #333;
-            transition: 0.3s;
-        }
-        .media-item img, .media-item video { width: 100%; display: block; cursor: pointer; }
-        .caption { margin-top: 15px; font-size: 0.9rem; color: #bbb; }
+        .media-item .caption { margin-top: 15px; font-size: 0.9rem; color: var(--white); }
 
-        /* --- コラージュ用グリッド --- */
         .collage-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 0;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1.5px solid var(--accent-color);
-            box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.4);
+            gap: 2px;
+            background: rgba(255,255,255,0.15);
+        }
+        @media (max-width: 600px) {
+            .collage-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
         }
         .collage-item {
-            margin: 0;
-            padding: 0;
-            background-color: var(--card-bg);
-            border: none !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
+            margin: 0; padding: 0;
             aspect-ratio: 1 / 1;
             overflow: hidden;
             position: relative;
+            background: var(--bg-gray-2);
         }
         .collage-item img {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             object-fit: cover;
             border: none !important;
-            border-radius: 0 !important;
             transition: transform 0.3s ease, filter 0.3s ease;
             cursor: pointer;
+            display: block;
         }
-        .collage-item img:hover {
-            transform: scale(1.05);
-            filter: brightness(1.1);
-            z-index: 1;
-        }
-
-        /* デバイスタイル用のラベル */
+        .collage-item img:hover { transform: scale(1.05); filter: brightness(1.1); z-index: 1; }
         .device-label {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(0,0,0,0.65);
+            color: var(--white);
             padding: 5px 10px;
-            font-family: 'MyShikakuFont', sans-serif;
+            font-family: var(--font-pixel);
             font-size: 0.9rem;
             pointer-events: none;
+        }
+
+        .empty-data {
+            font-family: var(--font-score);
+            color: var(--w45);
+            letter-spacing: 2px;
+            padding: 24px;
+            border: 1px dashed var(--w25);
+            text-align: center;
+            font-size: 0.85rem;
         }
 
         /* --- もっと見るボタン --- */
         .load-more-btn {
             display: block;
             margin: 30px auto 0;
-            background-color: #333;
-            color: #fff;
-            border: 1px solid var(--accent-color);
-            padding: 10px 40px;
-            font-family: 'MyShikakuFont', sans-serif;
+            background: transparent;
+            color: var(--white);
+            border: 1px solid var(--line);
+            padding: 10px 44px;
+            font-family: var(--font-pixel);
             cursor: pointer;
-            transition: 0.3s;
-            border-radius: 4px;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.4);
+            transition: 0.25s;
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
         }
-        .load-more-btn:hover {
-            background-color: var(--accent-color);
-            color: #000;
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.4);
-            transform: translate(-2px, -2px);
-        }
+        .load-more-btn:hover { background: var(--orange); border-color: var(--orange); }
         .hidden-item { display: none !important; }
 
-        .font-digital { font-family: 'MyScoreFont', monospace; letter-spacing: 1px; font-weight: normal; }
+        /* --- Google Form --- */
+        iframe.google-form {
+            border: 1.5px solid var(--white) !important;
+            width: 100%;
+            height: 600px;
+            background-color: #fff;
+        }
 
-        /* --- 詳細表示用モーダル --- */
+        /* ===========================================
+           9. モーダル（ウィンドウ風）
+        =========================================== */
         .modal {
             display: none;
             position: fixed;
             z-index: 1000;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            inset: 0;
+            background-color: rgba(20, 20, 24, 0.92);
             justify-content: center;
             align-items: center;
             flex-direction: column;
             cursor: pointer;
             opacity: 0;
             transition: opacity 0.3s ease;
+            padding: 20px;
         }
         .modal.show { opacity: 1; }
-        .modal-content {
-            max-width: 90%;
-            max-height: 70%;
-            border: 2px solid var(--accent-color);
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(255, 179, 0, 0.3);
-            transform: scale(0.9);
+        .modal-window {
+            max-width: 90vw;
+            cursor: default;
+            transform: scale(0.92);
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal.show .modal-window { transform: scale(1); }
+        .modal-window .window-body { padding: 14px; }
+        .modal-content {
+            display: block;
+            max-width: 84vw;
+            max-height: 58vh;
             object-fit: contain;
+            margin: 0 auto;
         }
-        .modal.show .modal-content { transform: scale(1); }
         .modal-caption {
-            margin-top: 20px;
-            color: #fff;
-            font-size: 1rem;
+            margin-top: 14px;
+            color: var(--white);
+            font-size: 0.95rem;
             text-align: left;
-            font-family: 'MyShikakuFont', sans-serif;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: 0.3s delay 0.1s;
-            max-width: 90%;
+            font-family: var(--font-pixel);
         }
-        .modal-caption .spec-table th {
-            color: var(--accent-color);
-            font-family: 'MyScoreFont', monospace;
-        }
-        .modal.show .modal-caption { opacity: 1; transform: translateY(0); }
-        .close-btn { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; font-weight: bold; transition: 0.2s; }
-        .close-btn:hover { color: var(--accent-color); }
+        .modal-caption .spec-table th { color: var(--white); opacity: 0.85; font-family: var(--font-score); }
 
-        footer { text-align: center; padding: 30px; background-color: #111; font-size: 0.8rem; color: #777; border-top: 1px solid #333; }
-
-        /* --- クレジット表記用スタイル --- */
+        /* ===========================================
+           10. クレジット・フッター
+        =========================================== */
         .credits {
             margin-top: 10px;
             font-size: 0.8rem;
-            color: #888;
+            color: var(--white);
             text-align: left;
-            background: rgba(0,0,0,0.3);
-            padding: 10px;
-            border-radius: 4px;
+            background: rgba(0,0,0,0.22);
+            padding: 10px 12px;
+            border: 1px solid var(--w25);
         }
         .credits ul { list-style: none; padding: 0; margin: 0; }
         .credits li { margin-bottom: 2px; }
         .credits strong {
-            color: var(--accent-color);
+            color: var(--white);
             margin-right: 5px;
             font-weight: normal;
-            font-family: 'MyScoreFont', monospace;
+            font-family: var(--font-score);
+        }
+        .credits a { color: var(--white); }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px 60px;
+            font-size: 0.8rem;
+            color: var(--w45);
+            border-top: 1px solid var(--w25);
+            font-family: var(--font-score);
+            letter-spacing: 1px;
+        }
+
+        /* ===========================================
+           11. 出現アニメーション
+        =========================================== */
+        /* --- ウィンドウ：最小化→復元風（下からスケールして開く） --- */
+        .window { transform-origin: 50% 100%; }
+        .window.anim-hidden {
+            opacity: 0;
+            transform: scale(0.12) translateY(70px);
+            pointer-events: none;
+        }
+        .window.anim-show {
+            animation: winRestore 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes winRestore {
+            0%   { opacity: 0; transform: scale(0.12) translateY(70px); }
+            55%  { opacity: 1; }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* --- テキスト：タイピング表示 --- */
+        .type-hidden { visibility: hidden; }
+        .ch { visibility: hidden; }
+        .ch.on { visibility: visible; }
+        .ch.caret { border-right: 2px solid var(--orange); margin-right: -2px; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .window.anim-hidden { opacity: 1; transform: none; pointer-events: auto; }
+            .type-hidden, .ch { visibility: visible; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <img src="images/bannerIllust.png" alt="ThunFasky Banner" class="banner-img">
-        <h1>ThunFaskyのサイト</h1>
+    <!-- ===== 背景：グレー + グラデの彩り ===== -->
+    <div class="bg-layer"></div>
+
+    <!-- ===== 背景：FUI装飾（固定HUD） ===== -->
+    <div class="fui-layer" aria-hidden="true">
+        <div class="fui-panel fui-time">
+            <span class="fui-label">TIME</span>
+            <span class="fui-value" id="fui-clock">--:--:--</span>
+            <span class="fui-sub">UTC +09:00</span>
+        </div>
+        <div class="fui-panel fui-sys">
+            <span class="fui-label">SYS_01 &bull;</span>
+            <span class="fui-sub">STATUS</span>
+            <span style="color:var(--white);">ONLINE</span>
+            <svg class="fui-spark" width="120" height="26" viewBox="0 0 120 26">
+                <polyline points="0,18 12,16 24,19 36,10 44,14 56,4 66,17 80,12 94,15 108,8 120,13"
+                          fill="none" stroke="var(--orange)" stroke-width="1.5"/>
+            </svg>
+        </div>
+        <div class="fui-panel fui-node">
+            <span class="fui-label">NODE_03</span>
+            <span class="fui-sub">PING</span>
+            <span class="fui-value" id="fui-ping">12ms</span>
+        </div>
+        <div class="fui-panel fui-stream">
+            <span class="fui-label">DATA_STREAM &bull;</span>
+            <span class="fui-sub">VELOCITY</span>
+            <span class="fui-value" id="fui-velocity">78.2 KB/s</span>
+            <div class="fui-bars" id="fui-bars"></div>
+        </div>
+        <div class="fui-panel fui-server">
+            <span class="fui-label">SERVER_02 &bull;</span>
+            <span class="fui-sub">UPTIME</span>
+            <span class="fui-value" id="fui-uptime">0d 0h 0m</span>
+        </div>
+        <div class="fui-loading">
+            <span>LOADING...</span>
+            <span class="fui-loadbar"><i></i></span>
+            <span style="color:var(--orange);">62%</span>
+        </div>
+
+        <span class="fui-plus" style="top:14%; left:38%;">+</span>
+        <span class="fui-plus" style="top:60%; left:8%;">+</span>
+        <span class="fui-plus" style="top:74%; right:30%;">+</span>
+        <div class="fui-hatch" style="top:8%; left:20%;"></div>
+        <div class="fui-hatch" style="bottom:22%; right:8%;"></div>
+        <div class="fui-dots" style="top:10%; right:14%;"></div>
+        <div class="fui-dots" style="bottom:30%; left:30%;"></div>
+        <div class="fui-line-v" style="top:30%; left:50%;"></div>
+    </div>
+
+    <!-- ===== ヒーロー ===== -->
+    <header class="hero">
+        <h1 class="hero-title">ThunFasky<span style="color:var(--white);">.com</span>
+            <small>ThunFaskyのサイト</small>
+        </h1>
+        <div class="window">
+            <div class="window-bar">
+                <span class="win-title">banner.png</span>
+                <span class="win-controls">
+                    <button class="win-btn win-max" aria-label="最大化" onclick="return false;"></button>
+                    <button class="win-btn" aria-label="閉じる" onclick="toggleWindow(this)">×</button>
+                </span>
+            </div>
+            <div class="window-body">
+                <img src="images/bannerIllust.png" alt="ThunFasky Banner">
+            </div>
+        </div>
     </header>
 
     <div class="container">
 
+        <!-- ===== このサイトについて ===== -->
         <section>
-            <h2>このサイトについて</h2>
+            <div class="sec-head">
+                <span class="sec-eyebrow">// ABOUT</span><br>
+                <h2>このサイトについて</h2>
+            </div>
             <p>ThunFaskyのサイトです。何かしらをまとめていきます。</p>
             <div class="link-container">
                 <a href="https://x.com/ThunFasky" class="btn-link" target="_blank"><i class="fab fa-twitter"></i> X (Twitter)</a>
                 <a href="https://www.youtube.com/@ThunFasky" class="btn-link" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
                 <a href="https://steamcommunity.com/id/ThunFasky/" class="btn-link" target="_blank"><i class="fab fa-steam"></i> Steam</a>
             </div>
-            <div class="birthday-container">
-                <div id="cake-3d-box" class="cake-box"></div>
-                <div class="countdown-info">
-                    <div id="age-text" class="current-age font-digital">AGE: Calculating...</div>
-                    <div id="timer" class="font-digital">00d 00h 00m 00s</div>
+
+            <div class="window birthday-window">
+                <div class="window-bar">
+                    <span class="win-title">birthday_countdown.exe</span>
+                    <span class="win-controls">
+                        <button class="win-btn win-max" aria-label="最大化" onclick="return false;"></button>
+                        <button class="win-btn" aria-label="閉じる" onclick="toggleWindow(this)">×</button>
+                    </span>
                 </div>
-            </div>
-        </section>
-
-        <section>
-            <h2>デバイス</h2>
-            <div class="collage-grid" id="device-grid">
-                <div class="collage-item">
-                    <img src="images/gallery/desktopPic1.png" alt="Main PC" onclick="openModalWithHtml(this.src, '<h4>メインPC</h4><table class=\'spec-table\'><tr><th>CPU</th><td>Ryzen 9 9950X</td></tr><tr><th>GPU</th><td>Radeon RX 7900 XT OC</td></tr><tr><th>RAM</th><td>64GB DDR5</td></tr><tr><th>ROM</th><td>M.2 NVMe SSD 1+2+2TB</td></tr><tr><th>PSU</th><td>850w GOLD</td></tr><tr><th>Case</th><td>Geometric Future Model 5</td></tr><tr><th>OS</th><td>Win11 Home</td></tr></table>')">
-                    <div class="device-label">Main PC</div>
-                </div>
-                <div class="collage-item">
-                    <img src="images/gallery/laptopPic1.png" alt="Laptop" onclick="openModalWithHtml(this.src, '<h4>DELL Inspiron 14 5445</h4><table class=\'spec-table\'><tr><th>APU</th><td>Ryzen 7 8840U / Radeon 780M</td></tr><tr><th>RAM</th><td>32GB DDR5</td></tr><tr><th>ROM</th><td>SSD 1TB</td></tr><tr><th>RES</th><td>1920x1200 60Hz</td></tr><tr><th>OS</th><td>Win11 Home</td></tr></table>')">
-                    <div class="device-label">Laptop</div>
-                </div>
-            </div>
-        </section>
-
-        <section>
-            <h2>制作物</h2>
-            <h3>アプリケーション等</h3>
-            <div class="media-grid" id="apps-grid">
-                <div class="media-item">
-                    <img src="images/gallery/MyFavMusicBox.png" alt="MyFavMusicBox" onclick="openModal(this.src, 'MyFavMusicBox')">
-                    <div class="caption"><strong class="font-digital">MyFavMusicBox</strong><br>MP4やMP3等音声形式ファイルに対応</div>
-                </div>
-            </div>
-
-            <h3>イラスト</h3>
-            <div class="collage-grid" id="illust-grid">
-                <p style="padding: 20px; color: #777;">Loading images...</p>
-            </div>
-
-            <h3>作曲したもの</h3>
-            <div class="media-grid" id="music-grid">
-                <div style="padding: 10px; color: #888;">まだない</div>
-            </div>
-
-            <h2>作った動画</h2>
-            <div class="media-grid" id="video-grid">
-                <div class="media-item">
-                    <video id="myVideo" controls playsinline style="width: 100%; border-radius: 4px; border: 1px solid #333;" poster="images/thumbnail_sample.jpg">
-                        <source src="videos/M3 2025_Autumn Teres_DotBatTunes.mp4" type="video/mp4">
-                        お使いのブラウザは動画タグに対応していません。
-                    </video>
-                    <div class="caption">
-                        <strong class="font-digital" style="font-size:30px;">Teres 2025Autumn M3 CFD</strong>
-                        <div style="margin-top: 8px; margin-bottom: 12px;">
-                            <a href="https://twitter.com/TeresDtm/status/1981677048461726151" target="_blank" style="text-decoration: none; color: #1DA1F2; font-size: 0.9rem;">
-                                <i class="fab fa-twitter"></i> 元のツイート（公開元）を見る <i class="fas fa-external-link-alt" style="font-size: 0.8em;"></i>
-                            </a>
-                        </div>
-                        <div class="credits">
-                            <ul>
-                                <li><strong>Mastering:</strong> HALT (<a href="https://x.com/HALT668896" target="_blank" style="color: inherit;">@HALT668896</a>)</li>
-                                <li><strong>Illustration & Design:</strong> 空琳ゴ (<a href="https://x.com/sola_r1ngo" target="_blank" style="color: inherit;">@sola_r1ngo</a>)</li>
-                                <li><strong>CFD:</strong> ThunFasky</li>
-                            </ul>
+                <div class="window-body">
+                    <div class="birthday-flex">
+                        <div id="cake-3d-box" class="cake-box"></div>
+                        <div class="countdown-info">
+                            <div id="age-text" class="current-age font-digital">AGE: Calculating...</div>
+                            <div id="timer" class="font-digital">00d 00h 00m 00s</div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <script>
-                const videoElement = document.getElementById('myVideo');
-                if (videoElement) {
-                    videoElement.volume = 0.2;
-                }
-            </script>
         </section>
 
+        <!-- ===== デバイス ===== -->
         <section>
-            <h2>ギャラリー</h2>
-            <div class="collage-grid" id="gallery-grid">
+            <div class="sec-head">
+                <span class="sec-eyebrow">// DEVICES</span><br>
+                <h2>デバイス</h2>
+            </div>
+            <div class="window">
+                <div class="window-bar">
+                    <span class="win-title">devices_gallery</span>
+                    <span class="win-controls">
+                        <button class="win-btn win-max" aria-label="最大化" onclick="return false;"></button>
+                        <button class="win-btn" aria-label="閉じる" onclick="toggleWindow(this)">×</button>
+                    </span>
                 </div>
+                <div class="window-body">
+                    <div class="collage-grid" id="device-grid">
+                        <div class="collage-item">
+                            <img src="images/gallery/desktopPic1.png" alt="Main PC" onclick="openModalWithHtml(this.src, '<h4>メインPC</h4><table class=\'spec-table\'><tr><th>CPU</th><td>Ryzen 9 9950X</td></tr><tr><th>GPU</th><td>Radeon RX 7900 XT OC</td></tr><tr><th>RAM</th><td>64GB DDR5</td></tr><tr><th>ROM</th><td>M.2 NVMe SSD 1+2+2TB</td></tr><tr><th>PSU</th><td>850w GOLD</td></tr><tr><th>Case</th><td>Geometric Future Model 5</td></tr><tr><th>OS</th><td>Win11 Home</td></tr></table>')">
+                            <div class="device-label">Main PC</div>
+                        </div>
+                        <div class="collage-item">
+                            <img src="images/gallery/laptopPic1.png" alt="Laptop" onclick="openModalWithHtml(this.src, '<h4>DELL Inspiron 14 5445</h4><table class=\'spec-table\'><tr><th>APU</th><td>Ryzen 7 8840U / Radeon 780M</td></tr><tr><th>RAM</th><td>32GB DDR5</td></tr><tr><th>ROM</th><td>SSD 1TB</td></tr><tr><th>RES</th><td>1920x1200 60Hz</td></tr><tr><th>OS</th><td>Win11 Home</td></tr></table>')">
+                            <div class="device-label">Laptop</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
+        <!-- ===== 制作物 ===== -->
         <section>
-            <h2>自作PC制作依頼</h2>
+            <div class="sec-head">
+                <span class="sec-eyebrow">// WORKS</span><br>
+                <h2>制作物</h2>
+            </div>
+
+            <h3>アプリケーション等</h3>
+            <div class="media-grid" id="apps-grid">
+                <div class="window media-item">
+                    <div class="window-bar">
+                        <span class="win-title">MyFavMusicBox</span>
+                        <span class="win-controls">
+                            <button class="win-btn win-max" aria-label="最大化" onclick="return false;"></button>
+                            <button class="win-btn" aria-label="閉じる" onclick="toggleWindow(this)">×</button>
+                        </span>
+                    </div>
+                    <div class="window-body">
+                        <img src="images/gallery/MyFavMusicBox.png" alt="MyFavMusicBox" style="width:100%; display:block; cursor:pointer;" onclick="openModal(this.src, 'MyFavMusicBox')">
+                        <div class="caption"><strong class="font-digital">MyFavMusicBox</strong><br>MP4やMP3等音声形式ファイルに対応</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>イラスト</h3>
+            <div class="window">
+                <div class="window-bar">
+                    <span class="win-title">illust_gallery</span>
+                    <span class="win-controls">
+                        <button class="win-btn win-max" aria-label="最大化" onclick="return false;"></button>
+                        <button class="win-btn" aria-label="閉じる" onclick="toggleWindow(this)">×</button>
+                    </span>
+                </div>
+                <div class="window-body">
+                    <div class="collage-grid" id="illust-grid"></div>
+                    <button class="load-more-btn hidden-item" id="illust-more" onclick="loadMore('illust')">もっと見る</button>
+                </div>
+            </div>
+
+            <h3>作曲したもの</h3>
+            <div class="media-grid" id="music-grid">
+                <div class="empty-data">NO DATA — まだない</div>
+            </div>
+
+            <h3>作った動画</h3>
+            <div class="media-grid" id="video-grid">
+                <div class="window media-item">
+                    <div class="window-bar">
+                        <span class="win-title">M3_2025_Autumn.mp4</span>
+                        <span class="win-controls">
+                            <button class="win-btn win-max" aria-label="最大化" onclick="return false;"></button>
+                            <button class="win-btn" aria-label="閉じる" onclick="toggleWindow(this)">×</button>
+                        </span>
+                    </div>
+                    <div class="window-body">
+                        <video id="myVideo" controls playsinline style="width: 100%;" poster="images/thumbnail_sample.jpg">
+                            <source src="videos/M3 2025_Autumn Teres_DotBatTunes.mp4" type="video/mp4">
+                            お使いのブラウザは動画タグに対応していません。
+                        </video>
+                        <div class="caption">
+                            <strong class="font-digital" style="font-size:26px;">Teres 2025Autumn M3 CFD</strong>
+                            <div style="margin-top: 8px; margin-bottom: 12px;">
+                                <a href="https://twitter.com/TeresDtm/status/1981677048461726151" target="_blank" style="font-size: 0.9rem;">
+                                    <i class="fab fa-twitter"></i> 元のツイート（公開元）を見る <i class="fas fa-external-link-alt" style="font-size: 0.8em;"></i>
+                                </a>
+                            </div>
+                            <div class="credits">
+                                <ul>
+                                    <li><strong>Mastering:</strong> HALT (<a href="https://x.com/HALT668896" target="_blank">@HALT668896</a>)</li>
+                                    <li><strong>Illustration & Design:</strong> 空琳ゴ (<a href="https://x.com/sola_r1ngo" target="_blank">@sola_r1ngo</a>)</li>
+                                    <li><strong>CFD:</strong> ThunFasky</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== ギャラリー ===== -->
+        <section>
+            <div class="sec-head">
+                <span class="sec-eyebrow">// GALLERY</span><br>
+                <h2>ギャラリー</h2>
+            </div>
+            <div class="window">
+                <div class="window-bar">
+                    <span class="win-title">gallery</span>
+                    <span class="win-controls">
+                        <button class="win-btn win-max" aria-label="最大化" onclick="return false;"></button>
+                        <button class="win-btn" aria-label="閉じる" onclick="toggleWindow(this)">×</button>
+                    </span>
+                </div>
+                <div class="window-body">
+                    <div class="collage-grid" id="gallery-grid"></div>
+                    <button class="load-more-btn hidden-item" id="gallery-more" onclick="loadMore('gallery')">もっと見る</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 自作PC制作依頼 ===== -->
+        <section>
+            <div class="sec-head">
+                <span class="sec-eyebrow">// ORDER</span><br>
+                <h2>自作PC制作依頼</h2>
+            </div>
             <p style="margin-bottom: 20px;">自作PCの制作依頼を受け付けています!(同大学内もしくはFF以外の人は受け付けない場合があります。ご了承ください。)</p>
-            <div style="width: 100%; display: flex; justify-content: center;">
-                <iframe src="https://docs.google.com/forms/d/1ZUzGOJnNJklCILsIon1PyiVpD0XaF_bWnxvDgGb3_4s/viewform?embedded=true" class="google-form" frameborder="0" marginheight="0" marginwidth="0">読み込んでいます…</iframe>
+            <div class="window">
+                <div class="window-bar">
+                    <span class="win-title">order_form</span>
+                    <span class="win-controls">
+                        <button class="win-btn win-max" aria-label="最大化" onclick="return false;"></button>
+                        <button class="win-btn" aria-label="閉じる" onclick="toggleWindow(this)">×</button>
+                    </span>
+                </div>
+                <div class="window-body">
+                    <iframe src="https://docs.google.com/forms/d/1ZUzGOJnNJklCILsIon1PyiVpD0XaF_bWnxvDgGb3_4s/viewform?embedded=true" class="google-form" frameborder="0" marginheight="0" marginwidth="0">読み込んでいます…</iframe>
+                </div>
             </div>
         </section>
 
     </div>
 
+    <!-- ===== モーダル（ウィンドウ風） ===== -->
     <div id="imageModal" class="modal" onclick="closeModal()">
-        <span class="close-btn">&times;</span>
-        <img class="modal-content" id="modalImg">
-        <div id="modalCaption" class="modal-caption"></div>
+        <div class="window modal-window" onclick="event.stopPropagation()">
+            <div class="window-bar">
+                <span class="win-title">image_viewer</span>
+                <span class="win-controls">
+                    <button class="win-btn win-max" aria-label="最大化" onclick="return false;"></button>
+                    <button class="win-btn" aria-label="閉じる" onclick="closeModal()">×</button>
+                </span>
+            </div>
+            <div class="window-body">
+                <img class="modal-content" id="modalImg" alt="">
+                <div id="modalCaption" class="modal-caption"></div>
+            </div>
+        </div>
     </div>
 
     <footer><p>&copy; 2026 ThunFasky. All Rights Reserved.</p></footer>
 
+    <!-- ===========================================
+         メインスクリプト
+    =========================================== -->
+    <script>
+        /* ---------------------------------------------
+           ★ 画像リスト：ここにパスを追加すれば
+              イラスト / ギャラリーに自動で並びます
+        --------------------------------------------- */
+        const ILLUST_IMAGES = [
+            // { src: 'images/gallery/illust1.png', caption: 'イラスト1' },
+        ];
+        const GALLERY_IMAGES = [
+            // { src: 'images/gallery/photo1.png', caption: '' },
+        ];
+        const INITIAL_SHOW = 6; // 最初に表示する枚数（超過分は「もっと見る」）
+
+        function buildGrid(gridId, moreId, images) {
+            const grid = document.getElementById(gridId);
+            const moreBtn = document.getElementById(moreId);
+            if (!grid) return;
+            grid.innerHTML = '';
+            if (images.length === 0) {
+                grid.style.display = 'block';
+                grid.innerHTML = '<div class="empty-data">NO DATA</div>';
+                return;
+            }
+            images.forEach((img, i) => {
+                const fig = document.createElement('div');
+                fig.className = 'collage-item' + (i >= INITIAL_SHOW ? ' hidden-item' : '');
+                const el = document.createElement('img');
+                el.src = img.src;
+                el.alt = img.caption || '';
+                el.loading = 'lazy';
+                el.onclick = () => openModal(img.src, img.caption || '');
+                fig.appendChild(el);
+                grid.appendChild(fig);
+            });
+            if (moreBtn && images.length > INITIAL_SHOW) moreBtn.classList.remove('hidden-item');
+        }
+        function loadMore(kind) {
+            const gridId = kind === 'illust' ? 'illust-grid' : 'gallery-grid';
+            const moreId = kind === 'illust' ? 'illust-more' : 'gallery-more';
+            document.querySelectorAll('#' + gridId + ' .hidden-item').forEach(el => el.classList.remove('hidden-item'));
+            document.getElementById(moreId).classList.add('hidden-item');
+        }
+        buildGrid('illust-grid', 'illust-more', ILLUST_IMAGES);
+        buildGrid('gallery-grid', 'gallery-more', GALLERY_IMAGES);
+
+        /* --- ウィンドウの × ボタン：折りたたみトグル --- */
+        function toggleWindow(btn) {
+            const win = btn.closest('.window');
+            win.classList.toggle('collapsed');
+            btn.textContent = win.classList.contains('collapsed') ? '+' : '×';
+        }
+
+        /* --- モーダル --- */
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        const modalCaption = document.getElementById('modalCaption');
+
+        function openModal(src, caption) {
+            modalImg.src = src;
+            modalCaption.textContent = caption || '';
+            showModal();
+        }
+        function openModalWithHtml(src, html) {
+            modalImg.src = src;
+            modalCaption.innerHTML = html;
+            showModal();
+        }
+        function showModal() {
+            modal.style.display = 'flex';
+            requestAnimationFrame(() => modal.classList.add('show'));
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal() {
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+        /* --- 誕生日カウントダウン --- */
+        const BIRTH = new Date(2006, 11, 12); // 2006/12/12
+        function pad(n) { return String(n).padStart(2, '0'); }
+        function updateCountdown() {
+            const now = new Date();
+            let age = now.getFullYear() - BIRTH.getFullYear();
+            const thisYearBd = new Date(now.getFullYear(), 11, 12);
+            if (now < thisYearBd) age--;
+            let next = new Date(now.getFullYear(), 11, 12);
+            if (now >= next) next = new Date(now.getFullYear() + 1, 11, 12);
+            const diff = next - now;
+            const d = Math.floor(diff / 86400000);
+            const h = Math.floor(diff / 3600000) % 24;
+            const m = Math.floor(diff / 60000) % 60;
+            const s = Math.floor(diff / 1000) % 60;
+            document.getElementById('age-text').textContent = 'CURRENT AGE: ' + age;
+            document.getElementById('timer').textContent = `${d}d ${pad(h)}h ${pad(m)}m ${pad(s)}s`;
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        /* --- FUI HUD（時計・PING・速度・稼働時間） --- */
+        const PAGE_OPEN = Date.now();
+        function updateFui() {
+            const now = new Date();
+            const clock = document.getElementById('fui-clock');
+            if (clock) clock.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+            const up = Date.now() - PAGE_OPEN;
+            const uEl = document.getElementById('fui-uptime');
+            if (uEl) {
+                const uh = Math.floor(up / 3600000), um = Math.floor(up / 60000) % 60, us = Math.floor(up / 1000) % 60;
+                uEl.textContent = `${uh}h ${um}m ${us}s`;
+            }
+        }
+        updateFui();
+        setInterval(updateFui, 1000);
+
+        setInterval(() => {
+            const ping = document.getElementById('fui-ping');
+            if (ping) ping.textContent = (8 + Math.floor(Math.random() * 22)) + 'ms';
+            const vel = document.getElementById('fui-velocity');
+            if (vel) vel.textContent = (40 + Math.random() * 80).toFixed(1) + ' KB/s';
+        }, 2500);
+
+        // DATA_STREAM のバーをランダム生成
+        const barsBox = document.getElementById('fui-bars');
+        if (barsBox) {
+            for (let i = 0; i < 12; i++) {
+                const b = document.createElement('i');
+                b.style.height = (20 + Math.random() * 80) + '%';
+                barsBox.appendChild(b);
+            }
+            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!reduce) {
+                setInterval(() => {
+                    barsBox.querySelectorAll('i').forEach(b => b.style.height = (20 + Math.random() * 80) + '%');
+                }, 1600);
+            }
+        }
+
+        /* --- 動画の初期音量 --- */
+        const videoElement = document.getElementById('myVideo');
+        if (videoElement) videoElement.volume = 0.2;
+
+        /* ---------------------------------------------
+           出現アニメーション
+           - ウィンドウ：画面に入ったら最小化→復元風に展開
+           - テキスト　：画面に入ったらタイピング表示
+        --------------------------------------------- */
+        const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* --- ウィンドウ --- */
+        if (!REDUCE_MOTION) {
+            const winObserver = new IntersectionObserver((entries) => {
+                entries.forEach(e => {
+                    if (!e.isIntersecting) return;
+                    e.target.classList.remove('anim-hidden');
+                    e.target.classList.add('anim-show');
+                    winObserver.unobserve(e.target);
+                });
+            }, { threshold: 0.12 });
+
+            document.querySelectorAll('.window').forEach(w => {
+                if (w.closest('.modal')) return; // モーダルは対象外
+                w.classList.add('anim-hidden');
+                winObserver.observe(w);
+            });
+        }
+
+        /* --- タイピング --- */
+        function startTyping(el) {
+            // ネストした要素（リンク等）を壊さないよう、テキストノード単位で1文字ずつspan化
+            const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+            const textNodes = [];
+            while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+            const chars = [];
+            textNodes.forEach(node => {
+                if (!node.nodeValue.replace(/\s+/g, '')) return;
+                const frag = document.createDocumentFragment();
+                for (const c of node.nodeValue) {
+                    const s = document.createElement('span');
+                    s.className = 'ch';
+                    s.textContent = c;
+                    frag.appendChild(s);
+                    chars.push(s);
+                }
+                node.parentNode.replaceChild(frag, node);
+            });
+
+            el.classList.remove('type-hidden');
+            const total = chars.length;
+            if (total === 0) return;
+            // 長文ほど1文字あたりを速くして全体を1秒前後に収める
+            const interval = Math.max(10, Math.min(38, Math.floor(1000 / total)));
+            let i = 0;
+            const timer = setInterval(() => {
+                if (i >= total) {
+                    clearInterval(timer);
+                    chars[total - 1].classList.remove('caret');
+                    return;
+                }
+                chars[i].classList.add('on', 'caret');
+                if (i > 0) chars[i - 1].classList.remove('caret');
+                i++;
+            }, interval);
+        }
+
+        if (!REDUCE_MOTION) {
+            const typeObserver = new IntersectionObserver((entries) => {
+                entries.forEach(e => {
+                    if (!e.isIntersecting) return;
+                    typeObserver.unobserve(e.target);
+                    startTyping(e.target);
+                });
+            }, { threshold: 0.2 });
+
+            const typeTargets = document.querySelectorAll(
+                '.hero-title, .sec-eyebrow, h2, h3, section > p, .caption, .win-title, .empty-data, footer p'
+            );
+            typeTargets.forEach(el => {
+                el.classList.add('type-hidden');
+                typeObserver.observe(el);
+            });
+        }
+    </script>
+
+    <!-- --- 3Dケーキ（three.js / 既存のまま再構成） --- -->
     <script type="module">
         import * as THREE from 'three';
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -494,11 +1100,11 @@
             const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
             renderer.setClearColor(0x000000, 0);
             const pixelScale = 80;
-            renderer.setSize(pixelScale, pixelScale, false); 
+            renderer.setSize(pixelScale, pixelScale, false);
             renderer.domElement.id = 'cake-3d-canvas';
             container.appendChild(renderer.domElement);
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 1.8); 
+            const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
             scene.add(ambientLight);
             const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
             dirLight.position.set(5, 5, 5);
@@ -506,214 +1112,33 @@
 
             let model;
             const loader = new GLTFLoader();
-            
             loader.load('3DModels/cake.glb', (gltf) => {
                 model = gltf.scene;
-                const box = new THREE.Box3().setFromObject(model);
-                const size = box.getSize(new THREE.Vector3());
-                const center = box.getCenter(new THREE.Vector3());
-                const maxDim = Math.max(size.x, size.y, size.z);
-                const scale = 1.8 / maxDim; 
-                model.scale.set(scale, scale, scale);
-                model.position.x = -center.x * scale;
-                model.position.y = -center.y * scale + 0.1;
-                model.position.z = -center.z * scale;
 
-                model.traverse((child) => {
-                    if (child.isMesh && child.material) {
-                        child.material.metalness = 0;
-                        child.material.roughness = 0.8;
-                    }
-                });
+                // モデルを原点に完全センタリング
+                const box = new THREE.Box3().setFromObject(model);
+                const center = box.getCenter(new THREE.Vector3());
+                model.position.sub(center);
                 scene.add(model);
+
+                // バウンディングスフィアから「必ず全体が収まる」カメラ距離を計算
+                const sphere = box.getBoundingSphere(new THREE.Sphere());
+                const fov = THREE.MathUtils.degToRad(camera.fov);
+                const dist = (sphere.radius / Math.sin(fov / 2)) * 1.12; // 1.12 = 余白マージン
+                const dir = new THREE.Vector3(0, 0.45, 1).normalize();   // 少し上から見下ろすアングル
+                camera.position.copy(dir.multiplyScalar(dist));
                 camera.lookAt(0, 0, 0);
-            }, undefined, (error) => {
-                console.error('An error happened while loading the model:', error);
             });
 
+            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             function animate() {
                 requestAnimationFrame(animate);
-                if (model) model.rotation.y += 0.015;
+                if (model && !reduce) model.rotation.y += 0.012;
                 renderer.render(scene, camera);
             }
             animate();
         }
     </script>
 
-    <script>
-        // --- 1. microCMSから画像を取得して仕分ける処理 ---
-        async function fetchMicroCMSImages() {
-            // ▼ 正しいAPIキー（小文字s始まり）
-            const API_KEY = 'sq0VTAMzwAIJNhnORsJRUmOnYGeuy88jbwUJ'; 
-            
-            const SERVICE_DOMAIN = 'thunfasky';
-            const ENDPOINT = 'images'; 
-            
-            const url = `https://${SERVICE_DOMAIN}.microcms.io/api/v1/${ENDPOINT}?limit=100`;
-
-            const illustGrid = document.getElementById('illust-grid');
-            const galleryGrid = document.getElementById('gallery-grid');
-            
-            // 要素がなければ中断（エラー回避）
-            if(!illustGrid || !galleryGrid) return;
-
-            try {
-                const response = await fetch(url, {
-                    headers: { 'X-MICROCMS-API-KEY': API_KEY }
-                });
-                
-                if (!response.ok) throw new Error(`通信エラー: ${response.status}`);
-                
-                const data = await response.json();
-                console.log("=== microCMS取得データ ===", data); 
-
-                // イラスト欄は初期化（Loading文字を消す）
-                illustGrid.innerHTML = '';
-                
-                // ギャラリー欄も初期化（必要に応じて）
-                galleryGrid.innerHTML = '';
-
-                if (data.contents.length === 0) {
-                    illustGrid.innerHTML = '<p>画像がありません</p>';
-                    return;
-                }
-
-                data.contents.forEach(item => {
-                    const titleStr = item.title || item.name || 'No Title';
-                    const imageObj = item.image || item.gazou || item.img;
-                    
-                    // カテゴリ判定（配列・文字列両対応）
-                    let categories = [];
-                    const rawCategory = item.category || item.genre || item.type;
-                    if (Array.isArray(rawCategory)) {
-                        categories = rawCategory; 
-                    } else if (typeof rawCategory === 'string') {
-                        categories = [rawCategory]; 
-                    }
-
-                    if (imageObj && imageObj.url) {
-                        const div = document.createElement('div');
-                        div.className = 'collage-item';
-                        div.innerHTML = `<img src="${imageObj.url}" alt="${titleStr}" onclick="openModal(this.src, '${titleStr}')">`;
-
-                        // 振り分け処理
-                        if (categories.includes('イラスト') || categories.includes('illust')) {
-                            illustGrid.appendChild(div);
-                        } 
-                        else if (categories.includes('ギャラリー') || categories.includes('gallery')) {
-                            galleryGrid.appendChild(div);
-                        } 
-                        else {
-                            // カテゴリ不明な場合の処理（必要ならコメントアウト解除）
-                            // illustGrid.appendChild(div);
-                        }
-                    }
-                });
-
-                // もっと見るボタンの再設定
-                setupLoadMore('illust-grid', 8);
-                setupLoadMore('gallery-grid', 8);
-
-            } catch (error) {
-                console.error('microCMS Fetch Error:', error);
-                // エラー時はユーザーに分かりやすく表示（デバッグログではない）
-                illustGrid.innerHTML = `<p style="color:red; padding:20px;">画像の読み込みに失敗しました。</p>`;
-            }
-        }
-
-        // --- 2. モーダル制御 ---
-        function openModal(src, caption) {
-            const modal = document.getElementById('imageModal');
-            const img = document.getElementById('modalImg');
-            const cap = document.getElementById('modalCaption');
-            img.src = src;
-            cap.textContent = caption;
-            modal.style.display = "flex";
-            document.body.style.overflow = "hidden";
-            requestAnimationFrame(() => modal.classList.add('show'));
-        }
-
-        function openModalWithHtml(src, htmlContent) {
-            const modal = document.getElementById('imageModal');
-            const img = document.getElementById('modalImg');
-            const cap = document.getElementById('modalCaption');
-            img.src = src;
-            cap.innerHTML = htmlContent;
-            modal.style.display = "flex";
-            document.body.style.overflow = "hidden";
-            requestAnimationFrame(() => modal.classList.add('show'));
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('imageModal');
-            modal.classList.remove('show');
-            setTimeout(() => {
-                modal.style.display = "none";
-                document.body.style.overflow = "auto";
-            }, 300);
-        }
-
-        // --- 3. 年齢計算 ---
-        function updateBirthdayInfo() {
-            const birthDate = new Date(2006, 11, 12); 
-            const now = new Date();
-            let age = now.getFullYear() - birthDate.getFullYear();
-            if (now < new Date(now.getFullYear(), 11, 12)) age--;
-            document.getElementById('age-text').textContent = `CURRENT AGE: ${age}`;
-            
-            let nextBirthday = new Date(now.getFullYear(), 11, 12);
-            if (now > nextBirthday) nextBirthday.setFullYear(now.getFullYear() + 1);
-            const diff = nextBirthday - now;
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const min = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((diff % (1000 * 60)) / 1000);
-            document.getElementById('timer').textContent = `${d}d ${String(h).padStart(2, '0')}h ${String(min).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
-        }
-
-        // --- 4. 「もっと見る」ボタン機能 ---
-        function setupLoadMore(containerId, limit) {
-            const container = document.getElementById(containerId);
-            if(!container) return;
-            const nextEl = container.nextElementSibling;
-            if(nextEl && nextEl.classList.contains('load-more-btn')) {
-                nextEl.remove();
-            }
-            const items = Array.from(container.children).filter(el => el.tagName === 'DIV');
-            if (items.length <= limit) return;
-            items.forEach((item, index) => {
-                if (index >= limit) item.classList.add('hidden-item');
-            });
-            const btn = document.createElement('button');
-            btn.textContent = "もっと表示";
-            btn.className = "load-more-btn";
-            btn.addEventListener('click', () => {
-                const isExpanded = btn.textContent === "閉じる";
-                if (isExpanded) {
-                    items.forEach((item, index) => {
-                        if (index >= limit) item.classList.add('hidden-item');
-                    });
-                    btn.textContent = "もっと表示";
-                    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                } else {
-                    items.forEach(item => item.classList.remove('hidden-item'));
-                    btn.textContent = "閉じる";
-                }
-            });
-            container.parentNode.insertBefore(btn, container.nextSibling);
-        }
-
-        // --- 実行開始 ---
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchMicroCMSImages();
-            setupLoadMore('apps-grid', 3);
-            setupLoadMore('music-grid', 3);
-            setupLoadMore('video-grid', 3);
-            setupLoadMore('clip-grid', 3);
-            setupLoadMore('gallery-grid', 8);
-            setInterval(updateBirthdayInfo, 1000);
-            updateBirthdayInfo();
-        });
-    </script>
 </body>
 </html>
