@@ -407,8 +407,7 @@
         .collage-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 2px;
-            background: rgba(255,255,255,0.15);
+            gap: 10px;
         }
         @media (max-width: 600px) {
             .collage-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
@@ -418,16 +417,19 @@
             aspect-ratio: 1 / 1;
             overflow: hidden;
             position: relative;
-            background: var(--bg-gray-2);
+            background: transparent; /* 透過画像はオレンジ窓が透ける */
         }
         .collage-item img {
             width: 100%; height: 100%;
             object-fit: cover;
             border: none !important;
+            background: transparent;
             transition: transform 0.3s ease, filter 0.3s ease;
             cursor: pointer;
             display: block;
         }
+        /* 透過画像：切り抜かず全体表示・背景なし */
+        .collage-item img.is-transparent { object-fit: contain; }
         .collage-item img:hover { transform: scale(1.05); filter: brightness(1.1); z-index: 1; }
         .device-label {
             position: absolute;
@@ -507,6 +509,8 @@
             object-fit: contain;
             margin: 0 auto;
         }
+        /* 透過画像は白枠なしでそのまま表示 */
+        .modal-content.no-frame { border: none !important; background: transparent; }
         .modal-caption {
             margin-top: 14px;
             color: var(--white);
@@ -553,9 +557,10 @@
         =========================================== */
         /* --- ウィンドウ：最小化→復元風（下からスケールして開く） --- */
         .window { transform-origin: 50% 100%; }
+        /* 待機状態は透明化のみ（transformをかけると
+           IntersectionObserverの判定ボックスまで縮んで発火が遅れるため） */
         .window.anim-hidden {
             opacity: 0;
-            transform: scale(0.12) translateY(70px);
             pointer-events: none;
         }
         .window.anim-show {
@@ -862,39 +867,126 @@
     =========================================== -->
     <script>
         /* ---------------------------------------------
-           ★ 画像リスト：ここにパスを追加すれば
-              イラスト / ギャラリーに自動で並びます
+           ★ microCMS 設定（実際のAPI構造に対応）
+           - 単一エンドポイント「images」から全件取得し、
+             category フィールド（イラスト/ギャラリー）で振り分け
+           - boolean型「transparent」フィールドがあれば透過扱いを明示制御可能
+             （無い場合は拡張子 png/webp/gif/avif で自動判定）
         --------------------------------------------- */
+        const MICROCMS = {
+            serviceDomain: 'thunfasky',
+            apiKey: 'sq0VTAMzwAIJNhnORsJRUmOnYGeuy88jbwUJ',
+            endpoint: 'images',
+        };
+
+        /* 直接パス指定の画像（microCMSと併用可・先頭に並ぶ）
+           transparent: true/false を付けると透過扱いを明示できます */
         const ILLUST_IMAGES = [
-            // { src: 'images/gallery/illust1.png', caption: 'イラスト1' },
+            // { src: 'images/gallery/illust1.png', caption: 'イラスト1', transparent: true },
         ];
         const GALLERY_IMAGES = [
             // { src: 'images/gallery/photo1.png', caption: '' },
         ];
         const INITIAL_SHOW = 6; // 最初に表示する枚数（超過分は「もっと見る」）
 
+        /* 拡張子ベースの透過候補判定（png/webp/gif/avif） */
+        function isTransparentCandidate(src) {
+            return /\.(png|webp|gif|avif)$/i.test((src || '').split('?')[0]);
+        }
+        /* microCMSアセットはサムネイル用に縮小パラメータを付与 */
+        function thumbUrl(src) {
+            if (/microcms-assets\.io/.test(src)) {
+                return src + (src.includes('?') ? '&' : '?') + 'w=800';
+            }
+            return src;
+        }
+
+        async function fetchMicroCMSImages() {
+            const url = `https://${MICROCMS.serviceDomain}.microcms.io/api/v1/${MICROCMS.endpoint}?limit=100`;
+            const res = await fetch(url, { headers: { 'X-MICROCMS-API-KEY': MICROCMS.apiKey } });
+            if (!res.ok) throw new Error(`通信エラー: ${res.status}`);
+            const data = await res.json();
+
+            const illust = [];
+            const gallery = [];
+            (data.contents || []).forEach(item => {
+                const caption = item.title || item.name || '';
+                const imageObj = item.image || item.gazou || item.img;
+                if (!imageObj || !imageObj.url) return;
+
+                // category / genre / type のいずれか（配列・文字列両対応）
+                let categories = [];
+                const rawCat = item.category || item.genre || item.type;
+                if (Array.isArray(rawCat)) categories = rawCat;
+                else if (typeof rawCat === 'string') categories = [rawCat];
+
+                const tp = (typeof item.transparent === 'boolean') ? item.transparent : null;
+                const entry = { src: imageObj.url, caption, transparent: tp };
+
+                if (categories.includes('イラスト') || categories.includes('illust')) {
+                    illust.push(entry);
+                } else if (categories.includes('ギャラリー') || categories.includes('gallery')) {
+                    gallery.push(entry);
+                }
+            });
+            return { illust, gallery };
+        }
+
         function buildGrid(gridId, moreId, images) {
             const grid = document.getElementById(gridId);
             const moreBtn = document.getElementById(moreId);
             if (!grid) return;
             grid.innerHTML = '';
+            grid.style.display = '';
             if (images.length === 0) {
                 grid.style.display = 'block';
                 grid.innerHTML = '<div class="empty-data">NO DATA</div>';
+                if (moreBtn) moreBtn.classList.add('hidden-item');
                 return;
             }
             images.forEach((img, i) => {
+                const isTp = (img.transparent != null) ? img.transparent : isTransparentCandidate(img.src);
                 const fig = document.createElement('div');
                 fig.className = 'collage-item' + (i >= INITIAL_SHOW ? ' hidden-item' : '');
                 const el = document.createElement('img');
-                el.src = img.src;
+                el.src = thumbUrl(img.src);
                 el.alt = img.caption || '';
                 el.loading = 'lazy';
-                el.onclick = () => openModal(img.src, img.caption || '');
+                if (isTp) el.classList.add('is-transparent');
+                el.onclick = () => openModal(img.src, img.caption || '', isTp);
                 fig.appendChild(el);
                 grid.appendChild(fig);
             });
             if (moreBtn && images.length > INITIAL_SHOW) moreBtn.classList.remove('hidden-item');
+        }
+
+        function showGridMessage(gridId, msg) {
+            const grid = document.getElementById(gridId);
+            if (!grid) return;
+            grid.style.display = 'block';
+            grid.innerHTML = `<div class="empty-data">${msg}</div>`;
+        }
+
+        async function initGrids() {
+            showGridMessage('illust-grid', 'LOADING...');
+            showGridMessage('gallery-grid', 'LOADING...');
+            // 直接パス指定分（microCMS取得分の前に並ぶ）
+            let illust = [...ILLUST_IMAGES];
+            let gallery = [...GALLERY_IMAGES];
+
+            try {
+                const cms = await fetchMicroCMSImages();
+                illust = illust.concat(cms.illust);
+                gallery = gallery.concat(cms.gallery);
+                buildGrid('illust-grid', 'illust-more', illust);
+                buildGrid('gallery-grid', 'gallery-more', gallery);
+            } catch (error) {
+                console.error(error);
+                if (illust.length > 0) buildGrid('illust-grid', 'illust-more', illust);
+                else showGridMessage('illust-grid', `読込エラー: ${error.message}`);
+                if (gallery.length > 0) buildGrid('gallery-grid', 'gallery-more', gallery);
+                else showGridMessage('gallery-grid', '読込エラー');
+            }
         }
         function loadMore(kind) {
             const gridId = kind === 'illust' ? 'illust-grid' : 'gallery-grid';
@@ -902,8 +994,7 @@
             document.querySelectorAll('#' + gridId + ' .hidden-item').forEach(el => el.classList.remove('hidden-item'));
             document.getElementById(moreId).classList.add('hidden-item');
         }
-        buildGrid('illust-grid', 'illust-more', ILLUST_IMAGES);
-        buildGrid('gallery-grid', 'gallery-more', GALLERY_IMAGES);
+        initGrids();
 
         /* --- ウィンドウの × ボタン：折りたたみトグル --- */
         function toggleWindow(btn) {
@@ -917,13 +1008,15 @@
         const modalImg = document.getElementById('modalImg');
         const modalCaption = document.getElementById('modalCaption');
 
-        function openModal(src, caption) {
+        function openModal(src, caption, isTransparent) {
             modalImg.src = src;
+            modalImg.classList.toggle('no-frame', isTransparent != null ? isTransparent : isTransparentCandidate(src));
             modalCaption.textContent = caption || '';
             showModal();
         }
         function openModalWithHtml(src, html) {
             modalImg.src = src;
+            modalImg.classList.remove('no-frame');
             modalCaption.innerHTML = html;
             showModal();
         }
@@ -1019,7 +1112,7 @@
                     e.target.classList.add('anim-show');
                     winObserver.unobserve(e.target);
                 });
-            }, { threshold: 0.12 });
+            }, { threshold: 0, rootMargin: '0px 0px 80px 0px' }); // 1pxでも見えそうになったら即発火（下方向80px先読み）
 
             document.querySelectorAll('.window').forEach(w => {
                 if (w.closest('.modal')) return; // モーダルは対象外
@@ -1074,7 +1167,7 @@
                     typeObserver.unobserve(e.target);
                     startTyping(e.target);
                 });
-            }, { threshold: 0.2 });
+            }, { threshold: 0, rootMargin: '0px 0px 80px 0px' }); // 見え始める直前に打ち始める
 
             const typeTargets = document.querySelectorAll(
                 '.hero-title, .sec-eyebrow, h2, h3, section > p, .caption, .win-title, .empty-data, footer p'
