@@ -36,19 +36,27 @@
            - 背景 = グレー + 赤青橙紫のグラデ
         =========================================== */
         :root {
-            --bg-gray: #2c2c31;
-            --bg-gray-2: #232327;
+            /* 背景：濃紺〜黒紺 */
+            --bg-gray: #0a0f1e;       /* 旧名を流用（body背景）＝濃紺ベース */
+            --bg-gray-2: #060912;     /* 最暗部 */
+            --bg-lift: #0e1730;       /* パネルの持ち上げ色 */
+            /* オレンジ：従来どおり（輪郭・見出し・値に使用） */
             --orange: #FF7A1C;
-            --orange-deep: #E85D04;
+            --orange-deep: #E8590C;
+            --orange-soft: rgba(255,122,28,0.55);
+            --orange-faint: rgba(255,122,28,0.16);
+            /* 青：流線・グロー・差し色 */
+            --blue: #2456e6;
+            --blue-bright: #4f82ff;
             --white: #ffffff;
-            --w70: rgba(255,255,255,0.7);
+            --w70: rgba(255,255,255,0.72);
             --w45: rgba(255,255,255,0.45);
-            --w25: rgba(255,255,255,0.25);
-            --line: rgba(255,255,255,0.35);
-            --tint-purple: rgba(123, 47, 190, 0.22);
-            --tint-blue:   rgba(30, 111, 255, 0.16);
-            --tint-red:    rgba(255, 59, 59, 0.12);
-            --tint-orange: rgba(255, 122, 28, 0.18);
+            --w25: rgba(255,255,255,0.22);
+            --line: rgba(255,255,255,0.22);
+            /* 背景グラデのにじみ（青主体に変更） */
+            --tint-blue:   rgba(40, 96, 230, 0.22);
+            --tint-blue-2: rgba(20, 60, 170, 0.18);
+            --tint-orange: rgba(255, 122, 28, 0.10);
             --section-gap: 90px;
             --font-pixel: 'MyShikakuFont', sans-serif;
             --font-score: 'MyScoreFont', 'Courier New', monospace;
@@ -81,22 +89,35 @@
         .bg-layer {
             position: fixed;
             inset: 0;
-            z-index: -2;
+            z-index: -3;
             background:
-                radial-gradient(ellipse 60% 45% at 85% 0%,   var(--tint-orange), transparent 70%),
-                radial-gradient(ellipse 55% 40% at 0% 55%,   var(--tint-purple), transparent 70%),
-                radial-gradient(ellipse 50% 35% at 100% 80%, var(--tint-blue),   transparent 70%),
-                radial-gradient(ellipse 45% 30% at 30% 100%, var(--tint-red),    transparent 70%),
-                linear-gradient(160deg, #36363c 0%, var(--bg-gray) 45%, var(--bg-gray-2) 100%);
+                radial-gradient(ellipse 70% 55% at 88% 8%,  var(--tint-blue),   transparent 68%),
+                radial-gradient(ellipse 60% 50% at 100% 70%, var(--tint-blue-2), transparent 70%),
+                radial-gradient(ellipse 55% 40% at 8% 0%,    var(--tint-orange), transparent 70%),
+                linear-gradient(160deg, #0d1426 0%, var(--bg-gray) 45%, var(--bg-gray-2) 100%);
         }
         /* うっすらドットグリッド */
         .bg-layer::after {
             content: '';
             position: absolute;
             inset: 0;
-            background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
-            background-size: 28px 28px;
+            background-image: radial-gradient(rgba(120,150,220,0.07) 1px, transparent 1px);
+            background-size: 30px 30px;
+            mask-image: linear-gradient(180deg, #000 0%, #000 60%, transparent 100%);
         }
+
+        /* --- 青いエネルギー流線（このデザインの主役・固定背景） --- */
+        .swoosh-layer {
+            position: fixed;
+            top: 0; right: 0;
+            width: 46vw; height: 100vh;
+            min-width: 380px;
+            z-index: -2;
+            pointer-events: none;
+            opacity: 0.9;
+        }
+        .swoosh-layer svg { width: 100%; height: 100%; display: block; }
+        @media (max-width: 760px) { .swoosh-layer { opacity: 0.5; width: 70vw; } }
 
         /* --- FUI 装飾レイヤー（クリック不可） --- */
         .fui-layer {
@@ -109,11 +130,13 @@
         .fui-panel {
             position: absolute;
             border: 1px solid var(--w25);
+            border-top: 1px solid var(--orange-soft);
             padding: 10px 14px;
             font-size: 11px;
             letter-spacing: 1px;
             color: var(--w70);
-            background: rgba(0,0,0,0.15);
+            background: linear-gradient(180deg, rgba(14,23,48,0.55), rgba(6,9,18,0.45));
+            backdrop-filter: blur(2px);
             clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
         }
         .fui-panel .fui-label { font-size: 10px; color: var(--w45); display: block; margin-bottom: 2px; }
@@ -156,9 +179,104 @@
         }
         .fui-line-v { position: absolute; width: 1px; height: 120px; background: linear-gradient(var(--w25), transparent); }
 
+        /* 右下に薄く小さく置くバナー */
+        .fui-banner {
+            position: absolute;
+            right: 26px; bottom: 130px;
+            width: 190px;
+            opacity: 0.12;
+        }
+        .fui-banner img { width: 100%; display: block; }
+
+        /* === vectorheart-design__01.ai 由来の本物ベクター === */
+        /* 4点スパークル（白く発光） */
+        .ai-spark { position: absolute; color: #d8e6ff; opacity: 0.9;
+            filter: drop-shadow(0 0 7px rgba(120,170,255,0.65)); }
+        .ai-spark svg { display: block; width: 100%; height: auto; fill: currentColor; }
+        .ai-spark.tw { animation: spark-tw 3.4s ease-in-out infinite; }
+        @keyframes spark-tw { 0%,100%{opacity:.45; transform:scale(.92);} 50%{opacity:1; transform:scale(1);} }
+        /* コネクタ流線（ドット終端付き） */
+        .ai-conn { position: absolute; color: var(--orange-soft); opacity: 0.55; }
+        .ai-conn svg { display: block; width: 100%; height: auto; }
+
+        /* 謎の文字列レイヤー（LVDCCLAWS フォント・背景ベクター） */
+        @font-face { font-family: 'ClawsFont'; src: url('fonts/LVDCCLAWS-Regular.otf') format('opentype'); font-display: swap; }
+        .glyph-layer { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
+        .glyph {
+            position: absolute; font-family: 'ClawsFont'; white-space: nowrap;
+            letter-spacing: 6px; line-height: 1; color: #6f8de0; user-select: none;
+            text-shadow: 0 0 12px rgba(60,110,255,0.25);
+        }
+        .glyph.warm { color: var(--orange); text-shadow: 0 0 12px rgba(255,122,28,0.25); }
+
+        /* バーコード（数字付き） */
+        .fui-barcode { position: absolute; }
+        .fui-barcode svg { display: block; }
+        .fui-barcode .code {
+            display: block; text-align: center; margin-top: 3px;
+            font-family: var(--font-score); font-size: 9px; letter-spacing: 2px; color: var(--w70);
+        }
+
+        /* 4隅ブラケットの装飾枠（背景に散らす小フレーム） */
+        .fui-bracket {
+            position: absolute; --c: var(--orange-soft); --t: 1.5px; --l: 13px;
+            background:
+                linear-gradient(var(--c),var(--c)) 0 0/var(--l) var(--t) no-repeat,
+                linear-gradient(var(--c),var(--c)) 0 0/var(--t) var(--l) no-repeat,
+                linear-gradient(var(--c),var(--c)) 100% 0/var(--l) var(--t) no-repeat,
+                linear-gradient(var(--c),var(--c)) 100% 0/var(--t) var(--l) no-repeat,
+                linear-gradient(var(--c),var(--c)) 0 100%/var(--l) var(--t) no-repeat,
+                linear-gradient(var(--c),var(--c)) 0 100%/var(--t) var(--l) no-repeat,
+                linear-gradient(var(--c),var(--c)) 100% 100%/var(--l) var(--t) no-repeat,
+                linear-gradient(var(--c),var(--c)) 100% 100%/var(--t) var(--l) no-repeat;
+        }
+        .fui-bracket.blue { --c: rgba(79,130,255,0.5); }
+
+        /* 小さな目盛り／読み取り値 */
+        .fui-mini { position: absolute; font-family: var(--font-score); font-size: 9px;
+            letter-spacing: 1px; color: var(--w45); white-space: nowrap; }
+        .fui-mini b { color: var(--orange); font-weight: normal; }
+        .fui-ring { position: absolute; border: 1px solid var(--w25); border-radius: 50%; }
+        .fui-ring::after { content: ''; position: absolute; inset: 4px; border-radius: 50%;
+            border: 1px dashed var(--orange-soft); }
+        .fui-tick { position: absolute; height: 1px;
+            background: repeating-linear-gradient(90deg, var(--w45) 0 1px, transparent 1px 7px); }
+
+        /* ウィンドウのロックオン風フレーム（オレンジ・全ウィンドウ共通） */
+        .window { position: relative; }
+        .window::before, .window::after {
+            content: ''; position: absolute; inset: -10px; pointer-events: none; z-index: 6;
+        }
+        /* 4隅のL字ブラケット */
+        .window::before {
+            --c: var(--orange); --t: 2px; --l: 24px;
+            background:
+                linear-gradient(var(--c),var(--c)) 0 0/var(--l) var(--t) no-repeat,
+                linear-gradient(var(--c),var(--c)) 0 0/var(--t) var(--l) no-repeat,
+                linear-gradient(var(--c),var(--c)) 100% 0/var(--l) var(--t) no-repeat,
+                linear-gradient(var(--c),var(--c)) 100% 0/var(--t) var(--l) no-repeat,
+                linear-gradient(var(--c),var(--c)) 0 100%/var(--l) var(--t) no-repeat,
+                linear-gradient(var(--c),var(--c)) 0 100%/var(--t) var(--l) no-repeat,
+                linear-gradient(var(--c),var(--c)) 100% 100%/var(--l) var(--t) no-repeat,
+                linear-gradient(var(--c),var(--c)) 100% 100%/var(--t) var(--l) no-repeat;
+        }
+        /* 外周うっすら枠 + 各辺中央のティック */
+        .window::after {
+            --c: var(--orange);
+            border: 1px solid rgba(255,122,28,0.28);
+            background:
+                linear-gradient(var(--c),var(--c)) 50% 0/26px 2px no-repeat,
+                linear-gradient(var(--c),var(--c)) 50% 100%/26px 2px no-repeat,
+                linear-gradient(var(--c),var(--c)) 0 50%/2px 26px no-repeat,
+                linear-gradient(var(--c),var(--c)) 100% 50%/2px 26px no-repeat;
+        }
+        /* モーダル内のウィンドウには付けない */
+        .modal .window::before, .modal .window::after { display: none; }
+
         /* スマホでは数を絞って邪魔にならないように */
         @media (max-width: 760px) {
-            .fui-sys, .fui-node, .fui-stream, .fui-loading, .fui-line-v { display: none; }
+            .fui-sys, .fui-node, .fui-stream, .fui-loading, .fui-line-v,
+            .fui-banner, .glyph-layer { display: none; }
             .fui-time { top: 64px; right: 12px; transform: scale(0.85); transform-origin: top right; }
             .fui-server { bottom: 16px; right: 12px; transform: scale(0.85); transform-origin: bottom right; }
         }
@@ -182,7 +300,6 @@
             font-family: var(--font-score);
             font-size: clamp(2.4rem, 7vw, 4.6rem);
             color: var(--orange);
-            text-shadow: 0 4px 18px rgba(232, 93, 4, 0.45);
             margin: 0;
             line-height: 1.05;
             letter-spacing: 1px;
@@ -211,35 +328,52 @@
            - 中身はオレンジ塗りつぶし、上に乗る要素は白
         =========================================== */
         .window {
-            background: linear-gradient(150deg, var(--orange) 0%, var(--orange-deep) 100%);
-            border: 1px solid rgba(255,255,255,0.55);
-            box-shadow: 10px 10px 0 rgba(0,0,0,0.35), 0 0 30px rgba(255,122,28,0.18);
+            background:
+                linear-gradient(180deg, rgba(14,23,48,0.92) 0%, rgba(8,13,28,0.94) 100%);
+            border: 1px solid var(--orange);
+            box-shadow:
+                0 0 0 1px var(--orange-faint),
+                0 18px 44px rgba(0,0,0,0.55),
+                inset 0 0 50px rgba(255,122,28,0.05);
         }
         .window-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: var(--white);
-            color: #222;
-            padding: 6px 10px;
+            gap: 10px;
+            background: rgba(255,122,28,0.07);
+            color: var(--white);
+            padding: 7px 10px;
             font-family: var(--font-score);
             font-size: 0.85rem;
+            line-height: 1;
             letter-spacing: 1px;
+            border-bottom: 1px solid var(--orange-soft);
             user-select: none;
         }
-        .window-bar .win-title { display: flex; align-items: center; gap: 8px; }
+        .window-bar .win-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1;
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
         .window-bar .win-title::before {
             content: '';
             width: 9px; height: 9px;
             background: var(--orange);
+            box-shadow: 0 0 8px rgba(255,122,28,0.7);
         }
-        .win-controls { display: flex; gap: 6px; }
+        .win-controls { display: flex; gap: 6px; flex-shrink: 0; }
         .win-btn {
             width: 22px; height: 22px;
             display: flex; align-items: center; justify-content: center;
-            border: 1.5px solid #222;
+            border: 1.5px solid var(--w45);
             background: transparent;
-            color: #222;
+            color: var(--w70);
             cursor: pointer;
             font-family: var(--font-score);
             font-size: 13px;
@@ -247,7 +381,7 @@
             padding: 0;
             transition: 0.15s;
         }
-        .win-btn:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
+        .win-btn:hover { background: var(--orange); color: #0a0f1e; border-color: var(--orange); }
         .win-btn.win-max::before {
             content: '';
             width: 9px; height: 9px;
@@ -257,11 +391,11 @@
         .window-body { padding: 25px; color: var(--white); }
         .window.collapsed .window-body { display: none; }
 
-        /* オレンジの上に乗る要素は白で統一 */
+        /* 濃紺ボディの上に乗る画像・動画は細いオレンジ枠で囲う */
         .window-body img, .window-body video, .window-body iframe {
-            border: 1.5px solid var(--white);
+            border: 1px solid var(--orange-soft);
         }
-        .window-body a { color: var(--white); }
+        .window-body a { color: var(--blue-bright); }
 
         /* ===========================================
            5. コンテンツレイアウト
@@ -293,7 +427,6 @@
             display: inline-block;
             padding: 6px 18px;
             position: relative;
-            text-shadow: 0 0 16px rgba(255,122,28,0.35);
         }
         /* コーナーブラケット */
         h2::before, h2::after {
@@ -582,15 +715,657 @@
             .window.anim-hidden { opacity: 1; transform: none; pointer-events: auto; }
             .type-hidden, .ch { visibility: visible; }
         }
+
+        /* ===========================================
+           12. Vector UI refresh
+           Visual-only overrides. Keep DOM and scripts intact.
+        =========================================== */
+        :root {
+            --bg-gray: #070b15;
+            --bg-gray-2: #02050d;
+            --bg-lift: #0b1327;
+            --orange: #ff7518;
+            --orange-deep: #d94a08;
+            --orange-soft: rgba(255, 117, 24, 0.62);
+            --orange-faint: rgba(255, 117, 24, 0.18);
+            --blue: #164ce8;
+            --blue-bright: #5e88ff;
+            --line: rgba(255, 255, 255, 0.18);
+            --section-gap: 34px;
+        }
+
+        body {
+            background: #030711;
+            min-height: 100vh;
+        }
+
+        .bg-layer {
+            background:
+                radial-gradient(ellipse 55% 40% at 48% 28%, rgba(255, 117, 24, 0.10), transparent 58%),
+                radial-gradient(ellipse 62% 52% at 94% 18%, rgba(32, 83, 238, 0.30), transparent 62%),
+                radial-gradient(ellipse 48% 50% at 5% 38%, rgba(36, 86, 230, 0.20), transparent 64%),
+                linear-gradient(160deg, #0a0f1c 0%, #050915 42%, #02050d 100%);
+        }
+        .bg-layer::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(116deg, transparent 0 10%, rgba(68, 103, 225, 0.24) 10.2% 12.2%, transparent 12.4% 100%),
+                linear-gradient(126deg, transparent 0 78%, rgba(22, 76, 232, 0.42) 78.2% 82.4%, transparent 82.6% 100%),
+                linear-gradient(76deg, transparent 0 7%, rgba(255, 255, 255, 0.15) 7.2% 7.35%, transparent 7.55% 100%),
+                linear-gradient(104deg, transparent 0 58%, rgba(255, 117, 24, 0.55) 58.1% 58.25%, transparent 58.45% 100%);
+            opacity: 0.88;
+        }
+        .bg-layer::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(rgba(255, 255, 255, 0.075) 1px, transparent 1px),
+                linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+            background-size: 22px 22px, 160px 160px, 160px 160px;
+            mask-image: linear-gradient(180deg, #000 0%, #000 76%, transparent 100%);
+        }
+
+        .swoosh-layer {
+            top: 0;
+            right: auto;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            min-width: 0;
+            opacity: 0.62;
+            mix-blend-mode: screen;
+            filter: saturate(1.25) contrast(1.06);
+        }
+        .swoosh-layer svg {
+            transform: translateX(22vw) scale(1.18);
+            transform-origin: center;
+        }
+        .swoosh-layer::before,
+        .swoosh-layer::after {
+            content: '';
+            position: absolute;
+            pointer-events: none;
+        }
+        .swoosh-layer::before {
+            left: -14vw;
+            top: 4vh;
+            width: 36vw;
+            height: 86vh;
+            background:
+                linear-gradient(138deg, transparent 0 20%, rgba(26, 74, 230, 0.52) 20.4% 29%, transparent 29.4% 100%),
+                linear-gradient(132deg, transparent 0 36%, rgba(255, 255, 255, 0.13) 36.2% 37%, transparent 37.2% 100%),
+                linear-gradient(116deg, transparent 0 58%, rgba(26, 74, 230, 0.34) 58.2% 68%, transparent 68.4% 100%);
+            clip-path: polygon(0 0, 100% 0, 76% 100%, 0 84%);
+        }
+        .swoosh-layer::after {
+            right: -6vw;
+            top: 7vh;
+            width: 44vw;
+            height: 76vh;
+            border-radius: 50%;
+            background:
+                repeating-radial-gradient(ellipse at 55% 50%, transparent 0 14px, rgba(220, 232, 255, 0.12) 15px 16px, transparent 17px 30px);
+            mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 72%, transparent 100%);
+            opacity: 0.72;
+            transform: rotate(-7deg);
+        }
+
+        .fui-layer {
+            opacity: 0.95;
+        }
+        .fui-layer::before,
+        .fui-layer::after {
+            content: '';
+            position: absolute;
+            pointer-events: none;
+        }
+        .fui-layer::before {
+            inset: 0;
+            background:
+                radial-gradient(circle at 31% 22%, rgba(255, 138, 54, 0.65) 0 1px, transparent 3px),
+                radial-gradient(circle at 78% 26%, rgba(255, 184, 97, 0.9) 0 1px, transparent 4px),
+                radial-gradient(circle at 15% 54%, rgba(210, 225, 255, 0.9) 0 1px, transparent 4px),
+                linear-gradient(116deg, transparent 0 9%, rgba(255, 255, 255, 0.35) 9.1% 9.22%, transparent 9.35% 100%),
+                linear-gradient(64deg, transparent 0 76%, rgba(255, 117, 24, 0.50) 76.05% 76.2%, transparent 76.35% 100%);
+            opacity: 0.78;
+        }
+        .fui-layer::after {
+            inset: auto 0 0 0;
+            height: 58px;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            background: linear-gradient(180deg, rgba(4, 8, 18, 0), rgba(4, 8, 18, 0.72));
+        }
+        .fui-panel {
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.035), transparent 42%),
+                linear-gradient(180deg, rgba(10, 18, 36, 0.58), rgba(2, 5, 13, 0.42));
+            border-color: rgba(255, 255, 255, 0.16);
+            border-top-color: rgba(255, 117, 24, 0.66);
+            box-shadow: inset 0 0 28px rgba(255, 117, 24, 0.045), 0 10px 34px rgba(0, 0, 0, 0.28);
+        }
+        .fui-time { top: 82px; right: 28px; }
+        .fui-sys { top: 210px; left: 28px; }
+        .fui-stream { bottom: 74px; left: 24px; }
+        .fui-server { bottom: 46px; right: 30px; }
+        .fui-loading { bottom: 20px; }
+        .ai-spark {
+            color: #f2f6ff;
+            opacity: 0.78;
+            mix-blend-mode: screen;
+            filter: drop-shadow(0 0 12px rgba(140, 176, 255, 0.78));
+        }
+        .ai-conn {
+            color: rgba(255, 117, 24, 0.42);
+        }
+        .fui-hatch {
+            opacity: 0.7;
+        }
+        .glyph {
+            color: rgba(105, 132, 220, 0.74);
+            text-shadow: 0 0 24px rgba(34, 82, 230, 0.32);
+        }
+
+        .hero,
+        .container {
+            max-width: 920px;
+        }
+        .hero {
+            padding: 24px 20px 8px;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            align-items: start;
+            justify-items: start;
+            gap: 16px;
+        }
+        .hero::before,
+        .hero::after,
+        .container::before {
+            content: '';
+            position: absolute;
+            pointer-events: none;
+        }
+        .hero::before {
+            left: 20px;
+            right: 20px;
+            top: 126px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 117, 24, 0.82), rgba(83, 125, 255, 0.62), transparent);
+            opacity: 0.65;
+        }
+        .hero::after {
+            right: 26px;
+            top: 90px;
+            width: 92px;
+            height: 10px;
+            background: radial-gradient(var(--orange) 1.3px, transparent 1.5px);
+            background-size: 11px 10px;
+            opacity: 0.74;
+        }
+        .hero-title {
+            max-width: 100%;
+            font-size: clamp(3.45rem, 4.75rem, 5.05rem);
+            line-height: 0.95;
+            letter-spacing: 0;
+            text-shadow: 0 0 18px rgba(255, 117, 24, 0.23);
+        }
+        .hero-title small {
+            font-size: clamp(1rem, 1.18rem, 1.25rem);
+            letter-spacing: 1px;
+            margin-top: 10px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.18);
+        }
+        .hero .window {
+            width: min(460px, calc(100vw - 48px));
+            justify-self: center;
+        }
+        .hero .window-body {
+            padding: 18px;
+            height: auto;
+            min-height: 0;
+            display: grid;
+            place-items: center;
+        }
+        .hero .window-body img {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 12px rgba(255, 117, 24, 0.24));
+        }
+
+        .container {
+            padding: 12px 20px 86px;
+        }
+        .container::before {
+            left: 0;
+            right: 0;
+            top: -18px;
+            height: calc(100% + 20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            background:
+                linear-gradient(90deg, transparent 0, rgba(255, 117, 24, 0.06) 50%, transparent 100%),
+                repeating-linear-gradient(90deg, transparent 0 46px, rgba(255, 255, 255, 0.045) 47px, transparent 48px);
+            opacity: 0.7;
+            z-index: -1;
+        }
+        section {
+            margin-bottom: var(--section-gap);
+        }
+        .sec-head {
+            margin-bottom: 12px;
+        }
+        .sec-eyebrow {
+            font-size: 0.66rem;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.58);
+        }
+        h2 {
+            font-size: 1.55rem;
+            padding: 4px 16px;
+        }
+        h3 {
+            margin: 22px 0 10px;
+            font-size: 1rem;
+            line-height: 1.35;
+        }
+        p {
+            margin-top: 0;
+            margin-bottom: 14px;
+        }
+
+        .window {
+            overflow: visible;
+            background:
+                linear-gradient(135deg, rgba(255, 117, 24, 0.16), transparent 30%),
+                linear-gradient(180deg, rgba(11, 18, 37, 0.90), rgba(3, 7, 17, 0.94));
+            border-color: rgba(255, 117, 24, 0.78);
+            box-shadow:
+                0 0 0 1px rgba(255, 117, 24, 0.25),
+                0 16px 46px rgba(0, 0, 0, 0.52),
+                0 0 34px rgba(255, 117, 24, 0.08),
+                inset 0 0 56px rgba(255, 117, 24, 0.08);
+            backdrop-filter: blur(7px);
+        }
+        .window::before {
+            inset: -8px;
+            --t: 2px;
+            --l: 30px;
+            opacity: 0.95;
+        }
+        .window::after {
+            inset: -2px;
+            border-color: rgba(255, 117, 24, 0.38);
+            background:
+                linear-gradient(var(--orange), var(--orange)) 50% 0/34px 2px no-repeat,
+                linear-gradient(var(--orange), var(--orange)) 50% 100%/34px 2px no-repeat,
+                linear-gradient(var(--orange), var(--orange)) 0 50%/2px 34px no-repeat,
+                linear-gradient(var(--orange), var(--orange)) 100% 50%/2px 34px no-repeat;
+            opacity: 0.9;
+        }
+        .window-bar {
+            min-height: 29px;
+            padding: 7px 10px 6px;
+            background:
+                linear-gradient(90deg, rgba(255, 117, 24, 0.18), rgba(255, 117, 24, 0.05) 52%, rgba(255, 255, 255, 0.04)),
+                rgba(4, 8, 19, 0.82);
+            border-bottom-color: rgba(255, 117, 24, 0.58);
+            box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+        }
+        .window-bar .win-title {
+            letter-spacing: 2px;
+        }
+        .win-btn {
+            width: 18px;
+            height: 18px;
+            border-color: rgba(255, 255, 255, 0.48);
+            background: rgba(255, 255, 255, 0.035);
+        }
+        .win-btn.win-max::before {
+            width: 8px;
+            height: 8px;
+        }
+        .window-body {
+            position: relative;
+            overflow: hidden;
+            padding: 18px;
+            background:
+                radial-gradient(circle at 50% 35%, rgba(255, 117, 24, 0.10), transparent 48%),
+                linear-gradient(180deg, rgba(2, 6, 16, 0.42), rgba(2, 6, 16, 0.18));
+        }
+        .window-body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(rgba(255, 117, 24, 0.13) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 117, 24, 0.10) 1px, transparent 1px),
+                linear-gradient(135deg, transparent 0 48%, rgba(255, 255, 255, 0.07) 48.2% 48.4%, transparent 48.6% 100%);
+            background-size: 28px 28px, 28px 28px, 100% 100%;
+            opacity: 0.42;
+            display: none;
+        }
+        .window-body > * {
+            position: relative;
+            z-index: 1;
+        }
+        .window-body img,
+        .window-body video,
+        .window-body iframe {
+            border-color: rgba(255, 117, 24, 0.58);
+        }
+        .modal {
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+            padding: 54px 20px 34px;
+        }
+        .modal-window {
+            width: min(880px, 92vw);
+            max-height: calc(100vh - 88px);
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-window .window-bar {
+            flex: none;
+        }
+        .modal-window .window-body {
+            overflow: auto;
+            max-height: calc(100vh - 130px);
+        }
+        .modal-content {
+            max-height: 58vh;
+        }
+
+        .link-container {
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .btn-link,
+        .load-more-btn {
+            background: rgba(3, 7, 17, 0.68);
+            border-color: rgba(255, 255, 255, 0.26);
+            box-shadow: inset 0 0 22px rgba(255, 117, 24, 0.035);
+        }
+
+        .media-grid {
+            --media-thumb: clamp(180px, 28vw, 240px);
+            display: flex;
+            grid-template-columns: none;
+            gap: 14px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 2px 2px 16px;
+            scroll-snap-type: x proximity;
+            scrollbar-color: var(--orange) rgba(255, 255, 255, 0.10);
+        }
+        .media-grid .media-item {
+            flex: 0 0 calc(var(--media-thumb) + 26px);
+            min-width: 0;
+            scroll-snap-align: start;
+        }
+        .media-grid > .empty-data {
+            flex: 0 0 calc(var(--media-thumb) + 26px);
+            min-height: calc(var(--media-thumb) + 34px);
+        }
+        .media-item .window-body {
+            padding: 12px;
+        }
+        .media-item .window-body > img,
+        .media-item .window-body > video {
+            width: var(--media-thumb) !important;
+            height: var(--media-thumb) !important;
+            max-width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+        .media-item .caption {
+            margin-top: 12px;
+            font-size: 0.84rem;
+            line-height: 1.45;
+            overflow-wrap: anywhere;
+        }
+        .media-item .caption strong {
+            font-size: 1rem !important;
+        }
+        .media-item .credits {
+            overflow-wrap: anywhere;
+        }
+        .collage-grid {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .collage-item {
+            aspect-ratio: 1 / 1;
+            border: none;
+            background: transparent;
+        }
+        #device-grid {
+            display: flex;
+            grid-template-columns: none;
+            gap: 14px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 2px 2px 14px;
+            scroll-snap-type: x proximity;
+            scrollbar-color: var(--orange) rgba(255, 255, 255, 0.10);
+        }
+        #device-grid .collage-item {
+            flex: 0 0 clamp(180px, 28vw, 240px);
+            aspect-ratio: auto;
+            border: 1px solid rgba(255, 117, 24, 0.42);
+            background: rgba(3, 7, 17, 0.36);
+            overflow: hidden;
+            scroll-snap-align: start;
+        }
+        #device-grid .collage-item img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+        }
+        #device-grid .device-label {
+            position: static;
+            width: 100%;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.68);
+        }
+        .collage-item img:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+        .device-label,
+        .empty-data,
+        .credits {
+            background: rgba(3, 7, 17, 0.72);
+            border-color: rgba(255, 117, 24, 0.28);
+        }
+        .empty-data {
+            min-height: 86px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            writing-mode: horizontal-tb;
+            white-space: nowrap;
+        }
+        .empty-data .ch {
+            display: inline-block;
+        }
+
+        footer {
+            padding-bottom: 54px;
+            background: linear-gradient(180deg, transparent, rgba(2, 5, 13, 0.72));
+        }
+
+        @media (min-width: 900px) {
+            .container > section:first-child .link-container {
+                margin-top: 16px;
+            }
+            .container > section:first-child .btn-link {
+                min-width: 126px;
+                justify-content: center;
+                border-radius: 0;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .swoosh-layer {
+                opacity: 0.44;
+                width: 100vw;
+            }
+            .swoosh-layer svg {
+                transform: translateX(10vw) scale(1.1);
+            }
+            .swoosh-layer::before {
+                width: 58vw;
+                opacity: 0.72;
+            }
+            .swoosh-layer::after {
+                right: -44vw;
+                width: 110vw;
+                opacity: 0.42;
+            }
+            .fui-layer::after {
+                height: 46px;
+            }
+            .hero {
+                padding: 26px 16px 8px;
+            }
+            .hero::before {
+                top: 98px;
+                left: 16px;
+                right: 16px;
+            }
+            .hero-title {
+                font-size: clamp(2.45rem, 2.85rem, 3rem);
+            }
+            .hero-title small {
+                font-size: 0.92rem;
+            }
+            .hero .window {
+                width: calc(100vw - 40px);
+            }
+            .hero .window-body {
+                padding: 18px;
+            }
+            .container {
+                padding: 14px 16px 70px;
+            }
+            .container::before {
+                left: 12px;
+                right: 12px;
+            }
+            .window-body {
+                padding: 14px;
+            }
+            .collage-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            .media-grid {
+                --media-thumb: clamp(170px, 54vw, 220px);
+                gap: 18px;
+            }
+            .container > section:first-child .link-container {
+                position: static;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .hero-title {
+                font-size: 2.1rem;
+            }
+            .hero-title small {
+                font-size: 0.82rem;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- ===== 背景：グレー + グラデの彩り ===== -->
+    <!-- ===== 背景：濃紺グラデ ===== -->
     <div class="bg-layer"></div>
+
+    <!-- ===== 背景：青いエネルギー流線（主役の装飾） =====
+         ※ 購入したベクター素材（透過PNG/Ai）に差し替える場合は、
+            このSVGを <img class="deco" src="..."> 等に置き換えてください。
+            暗色版を使うときは filter:invert(1) brightness(2) などで明色化を。 -->
+    <div class="swoosh-layer" aria-hidden="true">
+        <svg viewBox="0 0 600 1200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="blade" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%"  stop-color="#7ea8ff" stop-opacity="0.95"/>
+                    <stop offset="45%" stop-color="#2456e6" stop-opacity="0.55"/>
+                    <stop offset="100%" stop-color="#0a1c5a" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="blade2" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%"  stop-color="#dce8ff" stop-opacity="0.9"/>
+                    <stop offset="55%" stop-color="#3b6eff" stop-opacity="0.4"/>
+                    <stop offset="100%" stop-color="#0a1c5a" stop-opacity="0"/>
+                </linearGradient>
+                <radialGradient id="spark" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+                    <stop offset="60%" stop-color="#9cc0ff" stop-opacity="0.5"/>
+                    <stop offset="100%" stop-color="#3b6eff" stop-opacity="0"/>
+                </radialGradient>
+            </defs>
+
+            <!-- うねる細い流線（後ろ） -->
+            <g fill="none" stroke="#3b6eff" stroke-opacity="0.28" stroke-width="1.2">
+                <path d="M120,-40 C320,250 60,520 360,760 C520,900 380,1100 540,1260"/>
+                <path d="M180,-40 C380,260 120,540 420,790 C580,930 440,1130 600,1290"/>
+                <path d="M60,-40 C260,240 0,500 300,730 C460,870 320,1070 480,1230"/>
+            </g>
+
+            <!-- エネルギーの刃（前） -->
+            <g>
+                <path d="M300,120 C420,260 430,420 360,560 C330,470 300,400 280,300 C285,240 290,180 300,120 Z" fill="url(#blade)"/>
+                <path d="M380,360 C500,500 510,650 440,800 C410,700 380,620 360,520 C365,460 370,420 380,360 Z" fill="url(#blade2)"/>
+                <path d="M250,620 C360,740 370,880 310,1020 C285,930 260,860 245,770 C247,720 248,670 250,620 Z" fill="url(#blade)"/>
+            </g>
+
+            <!-- 右下：CR風のディフレクトアロー（あしらい） -->
+            <path d="M430,1080 L560,1080 L495,1180 Z M455,1095 L535,1095 L495,1155 Z"
+                  fill="none" stroke="#4f82ff" stroke-opacity="0.5" stroke-width="2"/>
+        </svg>
+    </div>
+
+    <!-- ===== 背景：謎の文字列（LVDCCLAWS） ===== -->
+    <div class="glyph-layer" id="glyph-layer" aria-hidden="true"></div>
 
     <!-- ===== 背景：FUI装飾（固定HUD） ===== -->
     <div class="fui-layer" aria-hidden="true">
+
+        <!-- vectorheart-design__01.ai から抽出した本物の図形（symbol化して再利用） -->
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+            <symbol id="aiSpark" viewBox="0 0 99.37 135.57">
+                <path d="M31.12 94.58C44.84 79.34 62.85 68.56 74.63 68.31C80.64 68.18 86.67 68.00 92.72 67.79C86.99 67.57 81.21 67.39 75.40 67.26C63.98 67.01 61.78 56.22 70.40 40.98C70.48 40.83 70.57 40.68 70.66 40.53C71.94 38.28 73.46 35.97 75.13 33.66C83.28 22.42 91.36 11.19 99.37 0.00C90.97 11.19 82.60 22.42 74.26 33.66C72.54 35.97 70.68 38.28 68.67 40.53C68.53 40.68 68.39 40.84 68.26 40.99C54.53 56.23 36.52 67.02 24.73 67.27C18.73 67.40 12.70 67.57 6.65 67.79C12.38 68.00 18.15 68.18 23.97 68.30C35.39 68.56 37.58 79.34 28.98 94.57C28.89 94.72 28.81 94.87 28.72 95.02C27.43 97.28 25.92 99.59 24.24 101.90C16.10 113.14 8.01 124.38 0.00 135.57C8.40 124.38 16.78 113.14 25.12 101.89C26.84 99.58 28.70 97.28 30.72 95.02C30.85 94.87 30.98 94.72 31.12 94.58Z"/>
+            </symbol>
+            <symbol id="aiConn" viewBox="0 0 965 195">
+                <path d="M0.00 114.67L249.39 114.67C271.57 114.67 293.00 122.35 309.74 136.29L333.21 155.83C374.05 189.84 436.54 182.91 468.19 140.86L489.71 112.28C515.77 77.66 563.96 65.90 604.13 84.36C638.01 99.93 678.36 94.20 706.07 69.88L759.31 23.15C776.27 8.26 798.45 0.00 821.46 0.00L959.75 0.00" stroke="currentColor" stroke-width="1.4" fill="none"/>
+                <circle cx="0" cy="114.67" r="3.4" fill="currentColor"/>
+                <circle cx="959.75" cy="0" r="3.4" fill="currentColor"/>
+            </symbol>
+        </svg>
+
+        <!-- 本物の4点スパークル（大きく目立たせる・少数） -->
+        <span class="ai-spark tw" style="top:7%;  right:6%;  width:132px;">                         <svg><use href="#aiSpark"/></svg></span>
+        <span class="ai-spark"    style="top:36%; left:5%;  width:104px; transform:rotate(24deg);">    <svg><use href="#aiSpark"/></svg></span>
+        <span class="ai-spark tw" style="bottom:9%; right:20%; width:78px; animation-delay:1.2s;">      <svg><use href="#aiSpark"/></svg></span>
+
+        <!-- 本物のコネクタ流線（ドット終端付き） -->
+        <span class="ai-conn" style="top:40%; right:0; width:430px;"><svg><use href="#aiConn"/></svg></span>
+        <span class="ai-conn" style="bottom:24%; left:0; width:360px; transform:scaleX(-1); opacity:.4;"><svg><use href="#aiConn"/></svg></span>
+
         <div class="fui-panel fui-time">
             <span class="fui-label">TIME</span>
             <span class="fui-value" id="fui-clock">--:--:--</span>
@@ -635,6 +1410,11 @@
         <div class="fui-dots" style="top:10%; right:14%;"></div>
         <div class="fui-dots" style="bottom:30%; left:30%;"></div>
         <div class="fui-line-v" style="top:30%; left:50%;"></div>
+
+        <!-- 右下に薄く小さく置くバナー -->
+        <div class="fui-banner">
+            <img src="images/bannerIllust.png" alt="">
+        </div>
     </div>
 
     <!-- ===== ヒーロー ===== -->
@@ -708,11 +1488,11 @@
                 <div class="window-body">
                     <div class="collage-grid" id="device-grid">
                         <div class="collage-item">
-                            <img src="images/gallery/desktopPic1.png" alt="Main PC" onclick="openModalWithHtml(this.src, '<h4>メインPC</h4><table class=\'spec-table\'><tr><th>CPU</th><td>Ryzen 9 9950X</td></tr><tr><th>GPU</th><td>Radeon RX 7900 XT OC</td></tr><tr><th>RAM</th><td>64GB DDR5</td></tr><tr><th>ROM</th><td>M.2 NVMe SSD 1+2+2TB</td></tr><tr><th>PSU</th><td>850w GOLD</td></tr><tr><th>Case</th><td>Geometric Future Model 5</td></tr><tr><th>OS</th><td>Win11 Home</td></tr></table>')">
+                            <img src="images/desktopPic1.png" alt="Main PC" onclick="openModalWithHtml(this.src, '<h4>メインPC</h4><table class=\'spec-table\'><tr><th>CPU</th><td>Ryzen 9 9900X</td></tr><tr><th>GPU</th><td>Radeon RX 7900 XT OC</td></tr><tr><th>RAM</th><td>64GB DDR5</td></tr><tr><th>ROM</th><td>M.2 NVMe SSD 1+2TB</td></tr><tr><th>PSU</th><td>850w GOLD</td></tr><tr><th>Case</th><td>iCUE 7000X RGB</td></tr><tr><th>OS</th><td>Win11 Home</td></tr></table>')">
                             <div class="device-label">Main PC</div>
                         </div>
                         <div class="collage-item">
-                            <img src="images/gallery/laptopPic1.png" alt="Laptop" onclick="openModalWithHtml(this.src, '<h4>DELL Inspiron 14 5445</h4><table class=\'spec-table\'><tr><th>APU</th><td>Ryzen 7 8840U / Radeon 780M</td></tr><tr><th>RAM</th><td>32GB DDR5</td></tr><tr><th>ROM</th><td>SSD 1TB</td></tr><tr><th>RES</th><td>1920x1200 60Hz</td></tr><tr><th>OS</th><td>Win11 Home</td></tr></table>')">
+                            <img src="images/laptopPic1.png" alt="Laptop" onclick="openModalWithHtml(this.src, '<h4>DELL Inspiron 14 5445</h4><table class=\'spec-table\'><tr><th>APU</th><td>Ryzen 7 8840U / Radeon 780M</td></tr><tr><th>RAM</th><td>32GB DDR5</td></tr><tr><th>ROM</th><td>SSD 1TB</td></tr><tr><th>RES</th><td>1920x1200 60Hz</td></tr><tr><th>OS</th><td>Win11 Home</td></tr></table>')">
                             <div class="device-label">Laptop</div>
                         </div>
                     </div>
@@ -731,15 +1511,15 @@
             <div class="media-grid" id="apps-grid">
                 <div class="window media-item">
                     <div class="window-bar">
-                        <span class="win-title">MyFavMusicBox</span>
+                        <span class="win-title">ThunDucky</span>
                         <span class="win-controls">
                             <button class="win-btn win-max" aria-label="最大化" onclick="return false;"></button>
                             <button class="win-btn" aria-label="閉じる" onclick="toggleWindow(this)">×</button>
                         </span>
                     </div>
                     <div class="window-body">
-                        <img src="images/gallery/MyFavMusicBox.png" alt="MyFavMusicBox" style="width:100%; display:block; cursor:pointer;" onclick="openModal(this.src, 'MyFavMusicBox')">
-                        <div class="caption"><strong class="font-digital">MyFavMusicBox</strong><br>MP4やMP3等音声形式ファイルに対応</div>
+                        <img src="images/ThunDuckyApp.png" alt="ThunDucky" style="width:100%; display:block; cursor:pointer;" onclick="openModal(this.src, 'ThunDucky')">
+                        <div class="caption"><strong class="font-digital">ThunDucky</strong><br>MP4やMP3等音声形式ファイルに対応</div>
                     </div>
                 </div>
             </div>
@@ -761,7 +1541,7 @@
 
             <h3>作曲したもの</h3>
             <div class="media-grid" id="music-grid">
-                <div class="empty-data">NO DATA — まだない</div>
+                <div class="empty-data">NO DATA</div>
             </div>
 
             <h3>作った動画</h3>
@@ -1092,6 +1872,128 @@
             }
         }
 
+        /* =========================================================
+           FUI を大量生成（謎文字列 LVDCCLAWS / バーコード / 装飾）
+           情報過多 OK。すべて背景レイヤー（クリック不可）。
+        ========================================================= */
+        (function buildHud() {
+            const fui = document.querySelector('.fui-layer');
+            const glyphLayer = document.getElementById('glyph-layer');
+            const rnd = (a, b) => a + Math.random() * (b - a);
+            const ri = (a, b) => Math.floor(rnd(a, b + 1));
+            const pick = a => a[Math.floor(Math.random() * a.length)];
+
+            /* --- 謎の文字列（LVDCCLAWS）：短い文字列を大きく1〜2個だけ --- */
+            if (glyphLayer) {
+                const shorts = ['Thn', 'Sky', 'Fsk', 'Vct', 'Xen', 'Hrt'];
+                const specs = [
+                    { txt: pick(shorts), top: '14%', left: '6%',  size: 190, op: 0.10, rot: -10 },
+                    { txt: pick(shorts), top: '52%', right: '7%', size: 150, op: 0.08, rot: 14, warm: true },
+                ];
+                specs.forEach(s => {
+                    const g = document.createElement('div');
+                    g.className = 'glyph' + (s.warm ? ' warm' : '');
+                    g.textContent = s.txt;
+                    if (s.left != null) g.style.left = s.left;
+                    if (s.right != null) g.style.right = s.right;
+                    g.style.top = s.top;
+                    g.style.fontSize = s.size + 'px';
+                    g.style.opacity = s.op;
+                    g.style.transform = 'rotate(' + s.rot + 'deg)';
+                    glyphLayer.appendChild(g);
+                });
+            }
+
+            if (!fui) return;
+            const place = (el, css) => { Object.assign(el.style, css); fui.appendChild(el); return el; };
+
+            /* --- バーコード（数字をバー幅に反映） --- */
+            function barcode(code, css, h) {
+                h = h || 38; const W = 116;
+                const seed = (code + code + code).replace(/\D/g, '') || '12120612';
+                let x = 0, bars = '';
+                for (let i = 0; x < W; i++) {
+                    const c = seed.charCodeAt(i % seed.length) + i * 7;
+                    const bw = 1 + (c % 4), gap = 1 + ((c >> 2) % 3);
+                    bars += `<rect x="${x}" y="0" width="${bw}" height="${h}" fill="#cdd6ee"/>`;
+                    x += bw + gap;
+                }
+                const wrap = document.createElement('div');
+                wrap.className = 'fui-barcode';
+                wrap.innerHTML = `<svg width="${W}" height="${h}" viewBox="0 0 ${W} ${h}">${bars}</svg>`
+                    + `<span class="code">${code}</span>`;
+                return place(wrap, css);
+            }
+            barcode('20061212', { top: '13%', left: '20px' });
+
+            /* --- 4隅ブラケットの小フレーム --- */
+            const frames = [
+                { top: '8%', left: '30%', w: 120, h: 70 }, { top: '40%', left: '6%', w: 90, h: 90, blue: 1 },
+                { top: '66%', right: '12%', w: 140, h: 64 }, { bottom: '10%', left: '40%', w: 110, h: 80, blue: 1 },
+                { top: '24%', right: '6%', w: 80, h: 80 }, { top: '80%', left: '18%', w: 70, h: 50 },
+            ];
+            frames.forEach(f => {
+                const b = document.createElement('div');
+                b.className = 'fui-bracket' + (f.blue ? ' blue' : '');
+                const css = { width: f.w + 'px', height: f.h + 'px' };
+                ['top', 'left', 'right', 'bottom'].forEach(k => { if (f[k] != null) css[k] = f[k]; });
+                place(b, css);
+            });
+
+            /* --- ＋マークのグリッド + 散らし --- */
+            (function plusGrid() {
+                const host = document.createElement('div');
+                place(host, { top: '12%', right: '4%', display: 'grid',
+                    gridTemplateColumns: 'repeat(6, 16px)', gap: '10px', opacity: .35 });
+                for (let i = 0; i < 24; i++) {
+                    const s = document.createElement('span');
+                    s.textContent = '+'; s.style.color = 'var(--w45)'; s.style.fontSize = '13px';
+                    host.appendChild(s);
+                }
+            })();
+            for (let i = 0; i < 10; i++) {
+                const s = document.createElement('span');
+                s.className = 'fui-plus'; s.textContent = '+';
+                place(s, { top: rnd(4, 94) + '%', left: rnd(2, 95) + '%',
+                    fontSize: rnd(11, 20).toFixed(0) + 'px', opacity: rnd(.2, .5).toFixed(2) });
+            }
+
+            /* --- 斜線ハッチ / 点線グリッド / 目盛り線 / リング --- */
+            for (let i = 0; i < 6; i++) {
+                const h = document.createElement('div'); h.className = 'fui-hatch';
+                place(h, { top: rnd(4, 92) + '%', left: rnd(2, 88) + '%',
+                    width: rnd(50, 110).toFixed(0) + 'px', opacity: rnd(.3, .6).toFixed(2),
+                    transform: 'rotate(' + pick([0, 0, 90]) + 'deg)' });
+            }
+            for (let i = 0; i < 4; i++) {
+                const d = document.createElement('div'); d.className = 'fui-dots';
+                place(d, { top: rnd(6, 88) + '%', left: rnd(4, 86) + '%', opacity: rnd(.25, .45).toFixed(2) });
+            }
+            for (let i = 0; i < 5; i++) {
+                const t = document.createElement('div'); t.className = 'fui-tick';
+                place(t, { top: rnd(8, 92) + '%', left: rnd(4, 70) + '%', width: rnd(80, 220).toFixed(0) + 'px' });
+            }
+            [[60, '18%', '46%'], [40, '70%', '50%'], [28, '30%', '80%']].forEach(([d, t, l]) => {
+                const r = document.createElement('div'); r.className = 'fui-ring';
+                place(r, { width: d + 'px', height: d + 'px', top: t, left: l, opacity: .5 });
+            });
+
+            /* --- コネクタ流線（本物 .ai 図形） --- */
+            [['18%', '0', 320, ''], ['58%', '0', 380, ''], ['80%', '0', 260, 'scaleX(-1)']].forEach(([t, r, w, tr]) => {
+                const c = document.createElement('span'); c.className = 'ai-conn';
+                c.innerHTML = '<svg><use href="#aiConn"/></svg>';
+                place(c, { top: t, right: r, width: w + 'px', transform: tr, opacity: rnd(.3, .55).toFixed(2) });
+            });
+
+            /* --- 小さな読み取り値 --- */
+            const minis = ['FREQ <b>1212</b>Hz', 'SEED <b>20061212</b>', 'MEM <b>78%</b>', 'CH <b>07</b>'];
+            minis.forEach(m => {
+                const el = document.createElement('div'); el.className = 'fui-mini'; el.innerHTML = m;
+                place(el, { top: rnd(6, 92) + '%', left: rnd(3, 80) + '%', opacity: rnd(.4, .8).toFixed(2),
+                    transform: Math.random() < .25 ? 'rotate(90deg)' : '' });
+            });
+        })();
+
         /* --- 動画の初期音量 --- */
         const videoElement = document.getElementById('myVideo');
         if (videoElement) videoElement.volume = 0.2;
@@ -1170,7 +2072,7 @@
             }, { threshold: 0, rootMargin: '0px 0px 80px 0px' }); // 見え始める直前に打ち始める
 
             const typeTargets = document.querySelectorAll(
-                '.hero-title, .sec-eyebrow, h2, h3, section > p, .caption, .win-title, .empty-data, footer p'
+                '.hero-title, .sec-eyebrow, h2, h3, section > p, .caption, .win-title, footer p'
             );
             typeTargets.forEach(el => {
                 el.classList.add('type-hidden');
