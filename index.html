@@ -503,11 +503,6 @@
         .font-digital { font-family: var(--font-score); letter-spacing: 1px; font-weight: normal; }
 
         
-        .spec-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; font-family: var(--font-score); }
-        .spec-table th, .spec-table td { text-align: left; padding: 8px 0; border-bottom: 1px solid var(--line); }
-        .spec-table th { width: 110px; color: var(--white); opacity: 0.85; }
-
-        
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
         .media-item .caption { margin-top: 15px; font-size: 0.9rem; color: var(--white); }
 
@@ -538,17 +533,6 @@
         
         .collage-item img.is-transparent { object-fit: contain; }
         .collage-item img:hover { transform: scale(1.05); filter: brightness(1.1); z-index: 1; }
-        .device-label {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%;
-            background: rgba(0,0,0,0.65);
-            color: var(--white);
-            padding: 5px 10px;
-            font-family: var(--font-pixel);
-            font-size: 0.9rem;
-            pointer-events: none;
-        }
-
         .empty-data {
             font-family: var(--font-score);
             color: var(--w45);
@@ -575,15 +559,6 @@
         .load-more-btn:hover { background: var(--orange); border-color: var(--orange); }
         .hidden-item { display: none !important; }
 
-        /* --- Google Form --- */
-        iframe.google-form {
-            border: 1.5px solid var(--white) !important;
-            width: 100%;
-            height: 600px;
-            background-color: #fff;
-        }
-
-        
         .modal {
             display: none;
             position: fixed;
@@ -623,9 +598,6 @@
             text-align: left;
             font-family: var(--font-pixel);
         }
-        .modal-caption .spec-table th { color: var(--white); opacity: 0.85; font-family: var(--font-score); }
-
-        
         .credits {
             margin-top: 10px;
             font-size: 0.8rem;
@@ -1113,43 +1085,10 @@
             border: none;
             background: transparent;
         }
-        #device-grid {
-            display: flex;
-            grid-template-columns: none;
-            gap: 14px;
-            overflow-x: auto;
-            overflow-y: hidden;
-            padding: 2px 2px 14px;
-            scroll-snap-type: x proximity;
-            scrollbar-color: var(--orange) rgba(255, 255, 255, 0.10);
-        }
-        #device-grid .collage-item {
-            flex: 0 0 clamp(180px, 28vw, 240px);
-            aspect-ratio: auto;
-            border: 1px solid rgba(255, 117, 24, 0.42);
-            background: rgba(3, 7, 17, 0.36);
-            overflow: hidden;
-            scroll-snap-align: start;
-        }
-        #device-grid .collage-item img {
-            width: 100%;
-            height: auto;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-        }
-        #device-grid .device-label {
-            position: static;
-            width: 100%;
-            min-height: 38px;
-            display: flex;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.68);
-        }
         .collage-item img:hover {
             transform: scale(1.05);
             filter: brightness(1.1);
         }
-        .device-label,
         .empty-data,
         .credits {
             background: rgba(3, 7, 17, 0.72);
@@ -1595,7 +1534,6 @@
             <p>ThunFaskyのサイトです。何かしらをまとめていきます。</p>
             <div class="link-container">
                 <a href="https://x.com/ThunFasky" class="btn-link" target="_blank"><i class="fab fa-twitter"></i> X (Twitter)</a>
-                <a href="https://www.youtube.com/@ThunFasky" class="btn-link" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
                 <a href="https://steamcommunity.com/id/ThunFasky/" class="btn-link" target="_blank"><i class="fab fa-steam"></i> Steam</a>
             </div>
 
@@ -1613,33 +1551,6 @@
                         <div class="countdown-info">
                             <div id="age-text" class="current-age font-digital">現在の年齢: 計算中...</div>
                             <div id="timer" class="font-digital">00d 00h 00m 00s</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== デバイス ===== -->
-        <section>
-            <div class="sec-head">
-                <span class="sec-eyebrow">// DEVICES</span><br>
-                <h2>デバイス</h2>
-            </div>
-            <div class="window">
-                <div class="window-bar">
-                    <span class="win-title">devices_gallery</span>
-                    <span class="win-controls">
-                    </span>
-                </div>
-                <div class="window-body">
-                    <div class="collage-grid" id="device-grid">
-                        <div class="collage-item">
-                            <img src="images/desktopPic1.png" alt="Main PC" onclick="openModalWithHtml(this.src, '<h4>メインPC</h4><table class=\'spec-table\'><tr><th>CPU</th><td>Ryzen 9 9900X</td></tr><tr><th>GPU</th><td>Radeon RX 7900 XT OC</td></tr><tr><th>RAM</th><td>64GB DDR5</td></tr><tr><th>ROM</th><td>M.2 NVMe SSD 1+2TB</td></tr><tr><th>PSU</th><td>850w GOLD</td></tr><tr><th>Case</th><td>iCUE 7000X RGB</td></tr><tr><th>OS</th><td>Win11 Home</td></tr></table>')">
-                            <div class="device-label">Main PC</div>
-                        </div>
-                        <div class="collage-item">
-                            <img src="images/laptopPic1.png" alt="Laptop" onclick="openModalWithHtml(this.src, '<h4>DELL Inspiron 14 5445</h4><table class=\'spec-table\'><tr><th>APU</th><td>Ryzen 7 8840U / Radeon 780M</td></tr><tr><th>RAM</th><td>32GB DDR5</td></tr><tr><th>ROM</th><td>SSD 1TB</td></tr><tr><th>RES</th><td>1920x1200 60Hz</td></tr><tr><th>OS</th><td>Win11 Home</td></tr></table>')">
-                            <div class="device-label">Laptop</div>
                         </div>
                     </div>
                 </div>
@@ -1664,6 +1575,17 @@
                     <div class="window-body">
                         <img src="images/ThunDuckyApp.png" alt="ThunDucky" style="width:100%; display:block; cursor:pointer;" onclick="openModal(this.src, 'ThunDucky')">
                         <div class="caption"><strong class="font-digital">ThunDucky</strong><br>MP4をMP3等の音声形式ファイルに変換</div>
+                    </div>
+                </div>
+                <div class="window media-item">
+                    <div class="window-bar">
+                        <span class="win-title">MEMARKRN</span>
+                        <span class="win-controls">
+                        </span>
+                    </div>
+                    <div class="window-body">
+                        <img src="images/MEMARKRN-thumbnail.png" alt="MEMARKRN" style="width:100%; display:block; cursor:pointer;" onclick="openModal(this.src, 'MEMARKRN')">
+                        <div class="caption"><strong class="font-digital">MEMARKRN</strong><br>暗闇を照らして進む2Dアクションゲーム</div>
                     </div>
                 </div>
             </div>
@@ -1734,25 +1656,6 @@
                 <div class="window-body">
                     <div class="collage-grid" id="gallery-grid"></div>
                     <button class="load-more-btn hidden-item" id="gallery-more" onclick="loadMore('gallery')">もっと見る</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== 自作PC制作依頼 ===== -->
-        <section>
-            <div class="sec-head">
-                <span class="sec-eyebrow">// ORDER</span><br>
-                <h2>自作PC制作依頼</h2>
-            </div>
-            <p style="margin-bottom: 20px;">自作PCの制作依頼を受け付けています。同大学内、もしくはFF以外の人は受け付けていない場合があります。ご了承ください。</p>
-            <div class="window">
-                <div class="window-bar">
-                    <span class="win-title">order_form</span>
-                    <span class="win-controls">
-                    </span>
-                </div>
-                <div class="window-body">
-                    <iframe src="https://docs.google.com/forms/d/1ZUzGOJnNJklCILsIon1PyiVpD0XaF_bWnxvDgGb3_4s/viewform?embedded=true" class="google-form" frameborder="0" marginheight="0" marginwidth="0">読み込んでいます...</iframe>
                 </div>
             </div>
         </section>
@@ -1914,12 +1817,6 @@
             modalImg.src = src;
             modalImg.classList.toggle('no-frame', isTransparent != null ? isTransparent : isTransparentCandidate(src));
             modalCaption.textContent = caption || '';
-            showModal();
-        }
-        function openModalWithHtml(src, html) {
-            modalImg.src = src;
-            modalImg.classList.remove('no-frame');
-            modalCaption.innerHTML = html;
             showModal();
         }
         function showModal() {
