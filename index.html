@@ -21,11 +21,6 @@
             font-family: 'MyScoreFont';
             src: url('fonts/x14y20pxScoreDozer.ttf') format('truetype');
         }
-        @font-face {
-            font-family: 'ClawsFont';
-            src: url('fonts/LVDCCLAWS-Regular.otf') format('opentype');
-            font-display: swap;
-        }
 
         :root {
             --orange: #ff7518;
@@ -252,14 +247,6 @@
 
         .ai-conn { position: absolute; color: rgba(255, 117, 24, 0.42); opacity: 0.55; }
         .ai-conn svg { display: block; width: 100%; height: auto; }
-
-        .glyph-layer { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
-        .glyph {
-            position: absolute; font-family: 'ClawsFont'; white-space: nowrap;
-            letter-spacing: 6px; line-height: 1; color: rgba(105, 132, 220, 0.74); user-select: none;
-            text-shadow: 0 0 24px rgba(34, 82, 230, 0.32);
-        }
-        .glyph.warm { color: var(--orange); text-shadow: 0 0 12px rgba(255,122,28,0.25); }
 
         .fui-barcode { position: absolute; }
         .fui-barcode svg { display: block; }
@@ -1077,7 +1064,7 @@
             .swoosh-layer::after { right: -44vw; width: 110vw; opacity: 0.42; }
 
             .fui-sys, .fui-node, .fui-stream, .fui-loading, .fui-line-v,
-            .fui-banner, .glyph-layer { display: none; }
+            .fui-banner { display: none; }
             .fui-time { transform: scale(0.85); transform-origin: top right; }
             .fui-server { transform: scale(0.85); transform-origin: bottom right; }
             .fui-layer::after { height: 46px; }
@@ -1105,6 +1092,8 @@
         }
 
         @media (max-width: 430px) {
+            /* ピクセルが崩れないよう 12px の倍数のまま 1 段階下げる */
+            h2 { font-size: 24px; }
             .banner-title {
                 left: 14px;
                 width: 52%;
@@ -1173,9 +1162,6 @@
                   fill="none" stroke="#4f82ff" stroke-opacity="0.5" stroke-width="2"/>
         </svg>
     </div>
-
-    
-    <div class="glyph-layer" id="glyph-layer" aria-hidden="true"></div>
 
     
     <div class="fui-layer" aria-hidden="true">
@@ -1754,31 +1740,8 @@
         
         (function buildHud() {
             const fui = document.querySelector('.fui-layer');
-            const glyphLayer = document.getElementById('glyph-layer');
             const rnd = (a, b) => a + Math.random() * (b - a);
-            const ri = (a, b) => Math.floor(rnd(a, b + 1));
             const pick = a => a[Math.floor(Math.random() * a.length)];
-
-            
-            if (glyphLayer) {
-                const shorts = ['Thn', 'Sky', 'Fsk', 'Vct', 'Xen', 'Hrt'];
-                const specs = [
-                    { txt: pick(shorts), top: '14%', left: '6%',  size: 190, op: 0.10, rot: -10 },
-                    { txt: pick(shorts), top: '52%', right: '7%', size: 150, op: 0.08, rot: 14, warm: true },
-                ];
-                specs.forEach(s => {
-                    const g = document.createElement('div');
-                    g.className = 'glyph' + (s.warm ? ' warm' : '');
-                    g.textContent = s.txt;
-                    if (s.left != null) g.style.left = s.left;
-                    if (s.right != null) g.style.right = s.right;
-                    g.style.top = s.top;
-                    g.style.fontSize = s.size + 'px';
-                    g.style.opacity = s.op;
-                    g.style.transform = 'rotate(' + s.rot + 'deg)';
-                    glyphLayer.appendChild(g);
-                });
-            }
 
             if (!fui) return;
             const place = (el, css) => { Object.assign(el.style, css); fui.appendChild(el); return el; };
