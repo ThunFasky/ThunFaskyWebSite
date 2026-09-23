@@ -234,19 +234,20 @@
         }
         .fui-banner img { width: 100%; display: block; }
 
+        /* 装飾素材：砕氷屋「ベクターハートデザイン集#01」を画像化したもの（色は画像に焼き込み済み）。
+           旧 SVG と同じく「幅 × 150px」の枠に縦横比を保って収める */
         .ai-spark {
             position: absolute;
-            color: #f2f6ff;
             opacity: 0.78;
             mix-blend-mode: screen;
             filter: drop-shadow(0 0 12px rgba(140, 176, 255, 0.78));
         }
-        .ai-spark svg { display: block; width: 100%; height: auto; fill: currentColor; }
+        .ai-spark img { display: block; width: 100%; height: 150px; object-fit: contain; }
         .ai-spark.tw { animation: spark-tw 3.4s ease-in-out infinite; }
         @keyframes spark-tw { 0%,100%{opacity:.45; transform:scale(.92);} 50%{opacity:1; transform:scale(1);} }
 
-        .ai-conn { position: absolute; color: rgba(255, 117, 24, 0.42); opacity: 0.55; }
-        .ai-conn svg { display: block; width: 100%; height: auto; }
+        .ai-conn { position: absolute; opacity: 0.55; }
+        .ai-conn img { display: block; width: 100%; height: 150px; object-fit: contain; }
 
         .fui-barcode { position: absolute; }
         .fui-barcode svg { display: block; }
@@ -1167,25 +1168,12 @@
     <div class="fui-layer" aria-hidden="true">
 
         
-        <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-            <symbol id="aiSpark" viewBox="0 0 99.37 135.57">
-                <path d="M31.12 94.58C44.84 79.34 62.85 68.56 74.63 68.31C80.64 68.18 86.67 68.00 92.72 67.79C86.99 67.57 81.21 67.39 75.40 67.26C63.98 67.01 61.78 56.22 70.40 40.98C70.48 40.83 70.57 40.68 70.66 40.53C71.94 38.28 73.46 35.97 75.13 33.66C83.28 22.42 91.36 11.19 99.37 0.00C90.97 11.19 82.60 22.42 74.26 33.66C72.54 35.97 70.68 38.28 68.67 40.53C68.53 40.68 68.39 40.84 68.26 40.99C54.53 56.23 36.52 67.02 24.73 67.27C18.73 67.40 12.70 67.57 6.65 67.79C12.38 68.00 18.15 68.18 23.97 68.30C35.39 68.56 37.58 79.34 28.98 94.57C28.89 94.72 28.81 94.87 28.72 95.02C27.43 97.28 25.92 99.59 24.24 101.90C16.10 113.14 8.01 124.38 0.00 135.57C8.40 124.38 16.78 113.14 25.12 101.89C26.84 99.58 28.70 97.28 30.72 95.02C30.85 94.87 30.98 94.72 31.12 94.58Z"/>
-            </symbol>
-            <symbol id="aiConn" viewBox="0 0 965 195">
-                <path d="M0.00 114.67L249.39 114.67C271.57 114.67 293.00 122.35 309.74 136.29L333.21 155.83C374.05 189.84 436.54 182.91 468.19 140.86L489.71 112.28C515.77 77.66 563.96 65.90 604.13 84.36C638.01 99.93 678.36 94.20 706.07 69.88L759.31 23.15C776.27 8.26 798.45 0.00 821.46 0.00L959.75 0.00" stroke="currentColor" stroke-width="1.4" fill="none"/>
-                <circle cx="0" cy="114.67" r="3.4" fill="currentColor"/>
-                <circle cx="959.75" cy="0" r="3.4" fill="currentColor"/>
-            </symbol>
-        </svg>
+        <span class="ai-spark tw" style="top:7%;  right:6%;  width:132px;"><img src="images/fui/spark.png" alt=""></span>
+        <span class="ai-spark"    style="top:36%; left:5%;  width:104px; transform:rotate(24deg);"><img src="images/fui/spark.png" alt=""></span>
+        <span class="ai-spark tw" style="bottom:9%; right:20%; width:78px; animation-delay:1.2s;"><img src="images/fui/spark.png" alt=""></span>
 
-        
-        <span class="ai-spark tw" style="top:7%;  right:6%;  width:132px;">                         <svg><use href="#aiSpark"/></svg></span>
-        <span class="ai-spark"    style="top:36%; left:5%;  width:104px; transform:rotate(24deg);">    <svg><use href="#aiSpark"/></svg></span>
-        <span class="ai-spark tw" style="bottom:9%; right:20%; width:78px; animation-delay:1.2s;">      <svg><use href="#aiSpark"/></svg></span>
-
-        
-        <span class="ai-conn" style="top:40%; right:0; width:430px;"><svg><use href="#aiConn"/></svg></span>
-        <span class="ai-conn" style="bottom:24%; left:0; width:360px; transform:scaleX(-1); opacity:.4;"><svg><use href="#aiConn"/></svg></span>
+        <span class="ai-conn" style="top:40%; right:0; width:430px;"><img src="images/fui/connector.png" alt=""></span>
+        <span class="ai-conn" style="bottom:24%; left:0; width:360px; transform:scaleX(-1); opacity:.4;"><img src="images/fui/connector.png" alt=""></span>
 
         <div class="fui-panel fui-time">
             <span class="fui-label">TIME</span>
@@ -1820,7 +1808,7 @@
             
             [['18%', '0', 320, ''], ['58%', '0', 380, ''], ['80%', '0', 260, 'scaleX(-1)']].forEach(([t, r, w, tr]) => {
                 const c = document.createElement('span'); c.className = 'ai-conn';
-                c.innerHTML = '<svg><use href="#aiConn"/></svg>';
+                c.innerHTML = '<img src="images/fui/connector.png" alt="">';
                 place(c, { top: t, right: r, width: w + 'px', transform: tr, opacity: rnd(.3, .55).toFixed(2) });
             });
 
