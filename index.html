@@ -15,7 +15,8 @@
         /* DenkiChip に無い漢字だけを補う（同じ 12 ドット格子の太字ピクセルフォント） */
         @font-face {
             font-family: 'PixelMplus12Bold';
-            src: url('fonts/PixelMplus12-Bold.ttf') format('truetype');
+            /* サイト内で使う文字だけに絞ったサブセット。文字を増やしたら作り直す */
+            src: url('fonts/PixelMplus12-Bold-subset.ttf') format('truetype');
         }
         @font-face {
             font-family: 'MyScoreFont';
@@ -846,6 +847,15 @@
             letter-spacing: 1px;
             background: linear-gradient(180deg, transparent, rgba(2, 5, 13, 0.72));
         }
+        footer p { margin: 0; }
+        footer .credit {
+            margin-top: 6px;
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            letter-spacing: 0;
+            color: var(--w45);
+        }
+        footer .credit a { color: inherit; }
 
         /* ===== 出現アニメーション ===== */
         .window.anim-hidden {
@@ -1021,6 +1031,11 @@
             white-space: nowrap;
         }
         .devlog-text { overflow-wrap: anywhere; }
+        /* 未来の予定：目印を中抜きにして区別する */
+        .devlog-item.is-upcoming::before { background: #070b15; border: 1px solid var(--orange); box-shadow: none; }
+        .devlog-item.is-upcoming .devlog-date { opacity: 0.7; }
+        /* 行の高さを乱さない上付き数字（Game³ など） */
+        .devlog-text sup { font-size: 0.62em; line-height: 0; vertical-align: 0.55em; margin-left: 0.05em; }
 
         /* ===== 自作PC組み立て依頼 ===== */
         .request-notice {
@@ -1464,19 +1479,26 @@
         </div>
     </div>
 
-    <footer><p>&copy; 2026 ThunFasky. All Rights Reserved.</p></footer>
+    <footer>
+        <p>&copy; 2026 ThunFasky. All Rights Reserved.</p>
+        <p class="credit">装飾素材：<a href="https://soya-works.booth.pm/" target="_blank" rel="noopener noreferrer">砕氷屋</a></p>
+    </footer>
 
     
     <script>
         
         // ===== MEMARKRN 記録 =====
         // 新しい記録はこの配列に1行追加するだけ。表示は日付の新しい順に自動で並ぶ。
-        //   date: '2026-09-22' の形式（'2026/8/8' や全角数字でも可）
-        //   text: 内容
+        //   date: '2026-09-22' の形式（'2026/8/8' や全角数字でも可）。曜日は自動で表示される
+        //   text: 内容（¹²³ は上付きの小さい数字で表示される）
         //   url : 関連リンク（任意。付けると本文がリンクになる）
+        //   同じ日付の記録は、ここに書いた順で表示される
         const MEMARKRN_LOG = [
-            // { date: '2026-09-22', text: 'version 0.1.2 に更新' },
-            // { date: '2026-08-08', text: '東京ゲームダンジョン13に出展', url: 'https://example.com/' },
+            { date: '2026-10-31', text: '東京ゲームダンジョン14出展予定' },
+            { date: '2026-09-26', text: 'v0.0.4をGame³にて展示' },
+            { date: '2026-09-26', text: 'WebGL ビルドを v0.0.4 に更新' },
+            { date: '2026-08-08', text: 'v0.0.3を東京ゲームダンジョン13にて展示' },
+            { date: '2025-11-21', text: 'MEMARKRNの原型を調布祭にて展示' },
         ];
 
         const MICROCMS = {
@@ -1603,6 +1625,31 @@
             const m = String(s).normalize('NFKC').match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
             return m ? `${m[1]}-${pad(m[2])}-${pad(m[3])}` : String(s);
         }
+        // 閲覧者の端末の今日（YYYY-MM-DD）
+        function todayYmd() {
+            const d = new Date();
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+        }
+        // YYYY-MM-DD → 'Fri' などの曜日（日付として読めなければ空）
+        function weekday(ymd) {
+            const m = ymd.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            if (!m) return '';
+            return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date(+m[1], +m[2] - 1, +m[3]).getDay()];
+        }
+        // ¹²³ はフォントによって出ない／大きさがそろわないので、<sup> の普通の数字に置き換えて入れる
+        function appendRichText(el, text) {
+            const SUP = { '¹': '1', '²': '2', '³': '3' };
+            for (const part of String(text).split(/([¹²³])/)) {
+                if (!part) continue;
+                if (SUP[part]) {
+                    const sup = document.createElement('sup');
+                    sup.textContent = SUP[part];
+                    el.appendChild(sup);
+                } else {
+                    el.appendChild(document.createTextNode(part));
+                }
+            }
+        }
         function renderDevLog(listId, entries) {
             const list = document.getElementById(listId);
             if (!list) return;
@@ -1615,16 +1662,18 @@
                 list.innerHTML = '<li class="empty-data">NO DATA</li>';
                 return items;
             }
+            const today = todayYmd();
             items.forEach(e => {
                 const li = document.createElement('li');
-                li.className = 'devlog-item';
+                li.className = 'devlog-item' + (e.date > today ? ' is-upcoming' : '');
                 const time = document.createElement('time');
                 time.className = 'devlog-date';
                 time.dateTime = e.date;
-                time.textContent = e.date;
+                const wd = weekday(e.date);
+                time.textContent = wd ? `${e.date} (${wd})` : e.date;
                 const body = document.createElement(e.url ? 'a' : 'span');
                 body.className = 'devlog-text';
-                body.textContent = e.text;
+                appendRichText(body, e.text);
                 if (e.url) {
                     body.href = e.url;
                     body.target = '_blank';
@@ -1637,8 +1686,10 @@
         }
         const devLog = renderDevLog('memarkrn-log', MEMARKRN_LOG);
         document.getElementById('memarkrn-log-count').textContent = `${devLog.length}件`;
-        if (devLog.length > 0) {
-            document.getElementById('memarkrn-last').textContent = devLog[0].date;
+        // LAST UPDATE は「今日まで」の記録の中で一番新しい日付（未来の予定は含めない）
+        const lastDone = devLog.find(e => e.date <= todayYmd());
+        if (lastDone) {
+            document.getElementById('memarkrn-last').textContent = lastDone.date;
             document.getElementById('memarkrn-last-row').hidden = false;
         }
 
