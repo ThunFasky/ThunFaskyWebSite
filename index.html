@@ -22,6 +22,12 @@
             font-display: swap;
             unicode-range: U+20-7E, U+B2-B3, U+B9, U+D7, U+F7, U+2010, U+2015, U+2026, U+203B, U+2190-2193, U+2500, U+25A0-25A1, U+25B2-25B3, U+25BC-25BD, U+25C6-25C7, U+25CB, U+25CE-25CF, U+2605-2606, U+2661, U+2665, U+266A, U+3000-3002, U+3008-3011, U+301C, U+3041-3096, U+309B-309C, U+30A1-30FE, U+4E00, U+4E0A-4E0B, U+4E26, U+4E2D, U+4E71, U+4E86, U+4E88, U+4EAC, U+4EBA, U+4ECA, U+4ED6, U+4ED8, U+4EE5, U+4EF6, U+4EFB, U+4F53, U+4F55, U+4F5C, U+4F7F, U+4F9D, U+4FDD, U+4FE1, U+500D, U+5099, U+50CF, U+512A, U+5143, U+5148, U+5165, U+5168, U+516C, U+5185, U+51FA, U+5207, U+5217, U+521D, U+5225, U+5236, U+52A0, U+52D5, U+5316, U+533A, U+5370, U+539F, U+53CE, U+53D7, U+53EF, U+53F7, U+5404, U+5408, U+540C, U+542B, U+5546, U+56DB, U+5728, U+578B, U+57CB, U+5834, U+5857, U+58F0, U+5909, U+5916, U+5927, U+592E, U+5B57, U+5B66, U+5B9A, U+5BB9, U+5BFE, U+5C0F, U+5C4B, U+5C55, U+5D29, U+5E03, U+5E45, U+5E74, U+5EFB, U+5F0F, U+5F62, U+5F8C, U+5FDC, U+6027, U+60F3, U+610F, U+614B, U+624B, U+627F, U+6298, U+629C, U+63DB, U+6570, U+6587, U+65AD, U+65B0, U+65B9, U+65E5, U+65E7, U+666E-666F, U+6697, U+66DC, U+66F2, U+66F4, U+66F8, U+671F, U+672A-672C, U+6750, U+6765, U+6771, U+67A0, U+6A2A, U+6B73, U+6BB5, U+6BD4, U+6C37, U+6CE8, U+6E08, U+6F14, U+6F22, U+7121, U+713C, U+7167, U+7269, U+72B6, U+73FE, U+7406, U+751F, U+7528, U+753B, U+756A, U+767D, U+76EE, U+77E2, U+7814-7815, U+793A, U+796D, U+7A76, U+7A7A, U+7ACB, U+7AEF, U+7B49, U+7B97, U+7D20, U+7D44, U+7D5E, U+7DDA, U+7E26, U+7F6E, U+8005, U+80CC, U+80FD, U+81A8, U+81EA, U+8272, U+82F1, U+884C, U+8868, U+88C5, U+898B, U+89A7, U+89D2, U+8A08, U+8A18, U+8A95, U+8AAD, U+8ABF, U+8FBA, U+8FBC, U+8FFD, U+900F, U+901A, U+9023, U+9032, U+904A, U+904E, U+914D, U+9332, U+9589, U+958B, U+95A2, U+95B2, U+95C7, U+9685, U+968E, U+96C6, U+97F3, U+9806, U+983C, U+98FE, U+9AD8, U+9F62, U+FF01, U+FF03, U+FF05-FF06, U+FF08-FF3D, U+FF41-FF5B, U+FF5D-FF5E;
         }
+        /* ウィンドウのタイトル用：Rajdhani SemiBold（Indian Type Foundry / SIL OFL 1.1）。英数記号だけのサブセット */
+        @font-face {
+            font-family: 'Rajdhani';
+            src: url('fonts/Rajdhani-SemiBold-latin.woff2') format('woff2');
+            font-display: swap;
+        }
         @font-face {
             font-family: 'MyScoreFont';
             src: url('fonts/x14y20pxScoreDozer.ttf') format('truetype');
@@ -356,6 +362,7 @@
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
+            font-family: 'Rajdhani', "Helvetica Neue", Arial, sans-serif;
             letter-spacing: 2px;
         }
         .window-bar .win-title::before {
@@ -1914,17 +1921,21 @@
             while (walker.nextNode()) textNodes.push(walker.currentNode);
 
             const chars = [];
+            const runs = [];
             textNodes.forEach(node => {
                 if (!node.nodeValue.replace(/\s+/g, '')) return;
-                const frag = document.createDocumentFragment();
+                // 1 文字ずつの span をまとめて包む。親が flex（.win-title や h3）だと
+                // 1 文字ごとに gap が入って字間が空いてしまうため
+                const run = document.createElement('span');
                 for (const c of node.nodeValue) {
                     const s = document.createElement('span');
                     s.className = 'ch';
                     s.textContent = c;
-                    frag.appendChild(s);
+                    run.appendChild(s);
                     chars.push(s);
                 }
-                node.parentNode.replaceChild(frag, node);
+                node.parentNode.replaceChild(run, node);
+                runs.push(run);
             });
 
             el.classList.remove('type-hidden');
@@ -1935,7 +1946,8 @@
             const timer = setInterval(() => {
                 if (i >= total) {
                     clearInterval(timer);
-                    chars[total - 1].classList.remove('caret');
+                    // 打ち終わったら普通のテキストに戻す（カーニングが効くように）
+                    runs.forEach(r => r.replaceWith(r.textContent));
                     return;
                 }
                 chars[i].classList.add('on', 'caret');
