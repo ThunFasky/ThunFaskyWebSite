@@ -7,16 +7,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        /* 見出し・UI 用：廻想体 ネクスト UP (B)（もじワク研究 / https://moji-waku.com/kaiso/ 商用可・サブセット化可） */
+        /* 漢字の予備。下の -subset に無い漢字（microCMS のキャプション等）が出たときだけ読み込まれる */
         @font-face {
-            font-family: 'DenkiChip';
-            src: url('fonts/x8y12pxDenkiChip.woff2') format('woff2'),
-                 url('fonts/x8y12pxDenkiChip.ttf') format('truetype');
+            font-family: 'Kaisotai';
+            src: url('fonts/Kaisotai-Next-UP-B-kanji.woff2') format('woff2');
+            font-display: swap;
+            unicode-range: U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF;
         }
-        /* DenkiChip に無い漢字だけを補う（同じ 12 ドット格子の太字ピクセルフォント） */
+        /* サイト内で使う文字＋英数・かな・記号だけに絞ったサブセット（後に書いた方が優先される） */
         @font-face {
-            font-family: 'PixelMplus12Bold';
-            /* サイト内で使う文字だけに絞ったサブセット。文字を増やしたら作り直す */
-            src: url('fonts/PixelMplus12-Bold-subset.ttf') format('truetype');
+            font-family: 'Kaisotai';
+            src: url('fonts/Kaisotai-Next-UP-B-subset.woff2') format('woff2');
+            font-display: swap;
+            unicode-range: U+20-7E, U+B2-B3, U+B9, U+D7, U+F7, U+2015, U+2026, U+203B, U+2190-2193, U+25A0-25A1, U+25B2-25B3, U+25BC-25BD, U+25C6-25C7, U+25CB, U+25CE-25CF, U+2605-2606, U+266A, U+3000-3002, U+3008-3011, U+3041-3096, U+309B-309C, U+30A1-30FE, U+4E00, U+4E0A-4E0B, U+4E26, U+4E2D, U+4E71, U+4E86, U+4E88, U+4EAC, U+4EBA, U+4ECA, U+4ED6, U+4ED8, U+4EE5, U+4EF6, U+4EFB, U+4F53, U+4F55, U+4F5C, U+4F7F, U+4F9D, U+4FDD, U+4FE1, U+500D, U+50CF, U+5143, U+5165, U+5168, U+516C, U+5185, U+51FA, U+5207, U+5217, U+521D, U+5225, U+5236, U+52A0, U+52D5, U+5316, U+533A, U+5370, U+539F, U+53CE, U+53D7, U+53EF, U+5404, U+5408, U+540C, U+542B, U+56DB, U+5728, U+578B, U+57CB, U+5834, U+5857, U+5897, U+58F0, U+5909, U+5916, U+5927, U+592A, U+592E, U+5B50, U+5B57, U+5B66, U+5B9A, U+5BB9, U+5BFE, U+5C0F, U+5C4B, U+5C55, U+5D29, U+5E03, U+5E45, U+5E74, U+5F0F, U+5F62, U+5FDC, U+6027, U+610F, U+614B, U+624B, U+627F, U+6298, U+629C, U+63DB, U+6570, U+6587, U+65AD, U+65B0, U+65E5, U+65E7, U+666E-666F, U+6697, U+66DC, U+66F2, U+66F4, U+66F8, U+671F, U+672A-672C, U+6750, U+6765, U+6771, U+67A0, U+683C, U+6A2A, U+6B73, U+6BB5, U+6BD4, U+6C37, U+6CE8, U+6E08, U+6F14, U+6F22, U+7121, U+713C, U+7167, U+7269, U+72B6, U+73FE, U+7406, U+751F, U+753B, U+756A, U+767D, U+76EE, U+76F4, U+77E2, U+7815, U+793A, U+796D, U+7A7A, U+7ACB, U+7AEF, U+7B49, U+7B97, U+7D20, U+7D44, U+7D5E, U+7DDA, U+7E26, U+7F6E, U+8005, U+80CC, U+80FD, U+81A8, U+81EA, U+8272, U+884C, U+8868, U+88C5, U+88DC, U+898B, U+89A7, U+89D2, U+8A08, U+8A18, U+8A2D, U+8A95, U+8AAD, U+8ABF, U+8FBA, U+8FBC, U+8FFD, U+900F, U+901A, U+9023, U+9032, U+904A, U+904E, U+914D, U+9332, U+9589, U+958B, U+95A2, U+95B2, U+95C7, U+9685, U+968E, U+96C6, U+97F3, U+9806, U+983C, U+98FE, U+9AD8, U+9F62, U+FF01, U+FF03, U+FF05-FF06, U+FF08-FF3D, U+FF41-FF5B, U+FF5D-FF5E;
         }
         @font-face {
             font-family: 'MyScoreFont';
@@ -32,8 +36,7 @@
             --w45: rgba(255,255,255,0.45);
             --w25: rgba(255,255,255,0.22);
             --section-gap: 34px;
-            /* 8×12 ドット設計（1em = 12 ドット）。12px の倍数で使うとドットが崩れない */
-            --font-pixel: 'DenkiChip', 'PixelMplus12Bold', sans-serif;
+            --font-pixel: 'Kaisotai', "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
             --font-score: 'MyScoreFont', 'Courier New', monospace;
             --font-body: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
         }
