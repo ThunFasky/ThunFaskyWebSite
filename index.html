@@ -932,7 +932,14 @@
             justify-content: center;
             padding: 12px 30px;
             font-size: 1rem;
-            border-color: rgba(255, 117, 24, 0.75);
+            background: var(--orange);
+            border-color: var(--orange);
+            color: var(--white);
+        }
+        .btn-primary:hover {
+            background: #ff8a3d;
+            border-color: #ff8a3d;
+            box-shadow: 0 0 22px rgba(255,122,28,0.7);
         }
 
         /* 記録（初期状態は閉じた折りたたみパネル） */
@@ -1339,7 +1346,7 @@
                                 <div id="memarkrn-last-row" hidden><dt>LAST UPDATE</dt><dd id="memarkrn-last"></dd></div>
                             </dl>
                         </div>
-                        <a href="UnityGame/MEMARKRN/index.html" class="btn-link btn-primary" target="_blank" rel="noopener noreferrer"><i class="fas fa-gamepad"></i> 遊ぶ</a>
+                        <a href="UnityGame/MEMARKRN/index.html" class="btn-link btn-primary" target="_blank" rel="noopener noreferrer"><i class="fas fa-gamepad"></i> Play</a>
                     </div>
                     <details class="devlog-panel">
                         <summary class="devlog-toggle">
