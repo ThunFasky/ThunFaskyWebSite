@@ -372,6 +372,22 @@
             box-shadow: 0 0 8px rgba(255,122,28,0.7);
         }
         .win-controls { display: flex; gap: 6px; flex-shrink: 0; }
+        /* 最小化ボタン（JS で各ウィンドウに追加）。最小化中は本文を隠してバーだけにする */
+        .win-btn {
+            width: 18px; height: 18px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0;
+            border: 1px solid rgba(255, 255, 255, 0.48);
+            background: rgba(255, 255, 255, 0.035);
+            color: var(--w70);
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .win-btn:hover, .win-btn:focus-visible { background: var(--orange); border-color: var(--orange); color: #0a0f1e; outline: none; }
+        /* 通常時は「＿」、最小化中は「□」 */
+        .win-btn.win-min::before { content: ''; width: 8px; height: 2px; margin-top: 6px; background: currentColor; }
+        .window.collapsed .win-btn.win-min::before { width: 8px; height: 8px; margin-top: 0; background: none; border: 1.5px solid currentColor; box-sizing: border-box; }
+        .window.collapsed .window-body { display: none; }
 
         .window-body {
             position: relative;
@@ -1077,17 +1093,10 @@
             font-size: 12px;
             line-height: 1.6;
         }
-        .request-form {
-            display: block;
-            width: 100%;
-            height: 900px;
-            background: #fff;
-            border: 1px solid rgba(255, 117, 24, 0.58);
-        }
-        .request-note {
-            margin: 8px 0 0;
-            font-size: 0.78rem;
-            color: var(--w45);
+        /* フォームは埋め込まず、Play と同じボタンから新しいタブで開く */
+        .request-open {
+            width: fit-content;
+            font-family: var(--font-pixel); /* ScoreDozer には日本語が無いため */
         }
 
         /* ===== スマホ ===== */
@@ -1117,7 +1126,6 @@
                 gap: 18px;
             }
             .game-window .window-body { padding: 14px; gap: 16px; }
-            .request-form { height: 760px; }
         }
 
         @media (max-width: 560px) {
@@ -1474,8 +1482,7 @@
                 <div class="window-body">
                     <p>自作PCの組み立て依頼をこちらのフォームで受け付けています。</p>
                     <p class="request-notice"><span class="notice-tag">注意</span><span>同大学以外の人も受付していますが、場合によっては断る可能性があるのでご了承ください。</span></p>
-                    <iframe class="request-form" src="https://docs.google.com/forms/d/1ZUzGOJnNJklCILsIon1PyiVpD0XaF_bWnxvDgGb3_4s/viewform?embedded=true" title="自作PC組み立て依頼フォーム" loading="lazy">読み込んでいます…</iframe>
-                    <p class="request-note">フォームが表示されない場合は <a href="https://docs.google.com/forms/d/1ZUzGOJnNJklCILsIon1PyiVpD0XaF_bWnxvDgGb3_4s/viewform" target="_blank" rel="noopener noreferrer">こちら</a> から開けます（新しいタブ）</p>
+                    <a href="https://docs.google.com/forms/d/1ZUzGOJnNJklCILsIon1PyiVpD0XaF_bWnxvDgGb3_4s/viewform" class="btn-link btn-primary request-open" target="_blank" rel="noopener noreferrer">フォームを開く</a>
                 </div>
             </div>
         </section>
@@ -1895,6 +1902,24 @@
         if (videoElement) videoElement.volume = 0.2;
 
         
+        /* --- ウィンドウの最小化（画像ビューアのモーダル以外） --- */
+        document.querySelectorAll('.window').forEach(win => {
+            if (win.closest('.modal')) return;
+            const controls = win.querySelector(':scope > .window-bar .win-controls');
+            if (!controls) return;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'win-btn win-min';
+            btn.setAttribute('aria-label', '最小化');
+            btn.setAttribute('aria-expanded', 'true');
+            btn.addEventListener('click', () => {
+                const collapsed = win.classList.toggle('collapsed');
+                btn.setAttribute('aria-label', collapsed ? '元に戻す' : '最小化');
+                btn.setAttribute('aria-expanded', String(!collapsed));
+            });
+            controls.appendChild(btn);
+        });
+
         const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         
