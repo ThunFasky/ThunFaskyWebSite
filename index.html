@@ -922,9 +922,13 @@
             height: auto;
             aspect-ratio: 1 / 1;
             object-fit: cover;
-            cursor: zoom-in;
+            /* 動くジャケット：クリックしても止まらず、ホバーしても何も出ない */
+            pointer-events: none;
             box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 60px rgba(255, 117, 24, 0.16);
         }
+        /* iOS の省電力モードなどで自動再生が止められたときに出る再生ボタンも隠す */
+        .game-jacket::-webkit-media-controls,
+        .game-jacket::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
         .game-info {
             width: min(100%, 680px, 78vh);
             display: grid;
@@ -1351,7 +1355,7 @@
                     <span class="win-controls"></span>
                 </div>
                 <div class="window-body">
-                    <img class="game-jacket" src="images/MEMARKRN-thumbnail.png" alt="MEMARKRN" onclick="openModal(this.src, 'MEMARKRN')">
+                    <video class="game-jacket" src="videos/MEMARKRN-cover.mp4" poster="images/MEMARKRN-thumbnail.png" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback aria-label="MEMARKRN"></video>
                     <div class="game-info">
                         <div>
                             <p class="game-lead">暗闇を照らして進む2Dアクションゲーム</p>
@@ -1921,6 +1925,12 @@
         });
 
         const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // 動きを減らす設定の人には、動くジャケットを止めて静止画（poster）を見せる
+        if (REDUCE_MOTION) {
+            const jacket = document.querySelector('video.game-jacket');
+            if (jacket) { jacket.removeAttribute('autoplay'); jacket.pause(); }
+        }
 
         
         if (!REDUCE_MOTION) {
