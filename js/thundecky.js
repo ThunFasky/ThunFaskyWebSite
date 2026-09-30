@@ -956,7 +956,17 @@
         new IntersectionObserver(es => { visible = es[0].isIntersecting; kick(); }, { rootMargin: '100px' }).observe(canvas);
     }
     document.addEventListener('visibilitychange', kick);
-    if (win) new MutationObserver(kick).observe(win, { attributes: true, attributeFilter: ['class'] });
+    // 最小化したら音楽を一時停止する（戻しても勝手には鳴らさない。再生ボタンで続きから）
+    function onWindowClassChange() {
+        if (win.classList.contains('collapsed')) {
+            if (isPlaying) { isPlaying = false; isPaused = true; audio.pause(); }
+            playAfterAnimation = false; resumeAfterScroll = false;
+        }
+        kick();
+    }
+    if (win) new MutationObserver(onWindowClassChange).observe(win, { attributes: true, attributeFilter: ['class'] });
+    // サイトを開いたときは毎回止まった状態から（自動再生はしない）。戻る/進むでページがそのまま復元されたときも止める
+    window.addEventListener('pageshow', e => { if (e.persisted) stopAudioPlayback(); });
 
     function resize() {
         const dpr = Math.min(2, window.devicePixelRatio || 1);
