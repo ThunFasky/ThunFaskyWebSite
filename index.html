@@ -22,6 +22,13 @@
             font-display: swap;
             unicode-range: U+20-7E, U+B2-B3, U+B9, U+D7, U+F7, U+2010, U+2015, U+2026, U+203B, U+2190-2193, U+2500, U+25A0-25A1, U+25B2-25B3, U+25BC-25BD, U+25C6-25C7, U+25CB, U+25CE-25CF, U+2605-2606, U+2661, U+2665, U+266A, U+3000-3002, U+3008-3011, U+301C, U+3041-3096, U+309B-309C, U+30A1-30FE, U+4E00, U+4E0A-4E0B, U+4E26, U+4E2D, U+4E71, U+4E86, U+4E88, U+4EAC, U+4EBA, U+4ECA, U+4ED6, U+4ED8, U+4EE5, U+4EF6, U+4EFB, U+4F53, U+4F55, U+4F5C, U+4F7F, U+4F9D, U+4FDD, U+4FE1, U+500D, U+5099, U+50CF, U+512A, U+5143, U+5148, U+5165, U+5168, U+516C, U+5185, U+51FA, U+5207, U+5217, U+521D, U+5225, U+5236, U+52A0, U+52D5, U+5316, U+533A, U+5370, U+539F, U+53CE, U+53D7, U+53EF, U+53F7, U+5404, U+5408, U+540C, U+542B, U+5546, U+56DB, U+5728, U+578B, U+57CB, U+5834, U+5857, U+58F0, U+5909, U+5916, U+5927, U+592E, U+5B57, U+5B66, U+5B9A, U+5BB9, U+5BFE, U+5C0F, U+5C4B, U+5C55, U+5D29, U+5E03, U+5E45, U+5E74, U+5EFB, U+5F0F, U+5F62, U+5F8C, U+5FDC, U+6027, U+60F3, U+610F, U+614B, U+624B, U+627F, U+6298, U+629C, U+63DB, U+6570, U+6587, U+65AD, U+65B0, U+65B9, U+65E5, U+65E7, U+666E-666F, U+6697, U+66DC, U+66F2, U+66F4, U+66F8, U+671F, U+672A-672C, U+6750, U+6765, U+6771, U+67A0, U+6A2A, U+6B73, U+6BB5, U+6BD4, U+6C37, U+6CE8, U+6E08, U+6F14, U+6F22, U+7121, U+713C, U+7167, U+7269, U+72B6, U+73FE, U+7406, U+751F, U+7528, U+753B, U+756A, U+767D, U+76EE, U+77E2, U+7814-7815, U+793A, U+796D, U+7A76, U+7A7A, U+7ACB, U+7AEF, U+7B49, U+7B97, U+7D20, U+7D44, U+7D5E, U+7DDA, U+7E26, U+7F6E, U+8005, U+80CC, U+80FD, U+81A8, U+81EA, U+8272, U+82F1, U+884C, U+8868, U+88C5, U+898B, U+89A7, U+89D2, U+8A08, U+8A18, U+8A95, U+8AAD, U+8ABF, U+8FBA, U+8FBC, U+8FFD, U+900F, U+901A, U+9023, U+9032, U+904A, U+904E, U+914D, U+9332, U+9589, U+958B, U+95A2, U+95B2, U+95C7, U+9685, U+968E, U+96C6, U+97F3, U+9806, U+983C, U+98FE, U+9AD8, U+9F62, U+FF01, U+FF03, U+FF05-FF06, U+FF08-FF3D, U+FF41-FF5B, U+FF5D-FF5E;
         }
+        /* バナーのタイトル用：Tektur Black（The Tektur Project Authors / SIL OFL 1.1）。英数記号だけのサブセット */
+        @font-face {
+            font-family: 'Tektur';
+            src: url('fonts/Tektur-Black-latin.woff2') format('woff2');
+            font-weight: 900;
+            font-display: swap;
+        }
         /* ウィンドウのタイトル用：Rajdhani SemiBold（Indian Type Foundry / SIL OFL 1.1）。英数記号だけのサブセット */
         @font-face {
             font-family: 'Rajdhani';
@@ -224,18 +231,17 @@
             place-items: center;
             padding: 14px;
             background:
-                radial-gradient(circle at 80% 22%, rgba(255, 122, 28, 0.22), transparent 34%),
-                linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 244, 229, 0.96));
+                radial-gradient(circle at 80% 22%, rgba(255, 122, 28, 0.14), transparent 38%),
+                linear-gradient(135deg, #232325, #1b1b1d);
         }
+        /* バナー：暗いチャコールの地に、45° の帯・オレンジの円・ハーフトーン（図形は下の SVG） */
         .banner-composite {
             position: relative;
             width: 100%;
             aspect-ratio: 2672 / 1503;
             overflow: hidden;
             isolation: isolate;
-            background:
-                linear-gradient(102deg, #fff 0 44%, rgba(255, 247, 237, 0.96) 44% 58%, rgba(255, 122, 28, 0.42) 58% 100%),
-                #fff;
+            background: #2a2a2c;
         }
         .banner-composite::before,
         .banner-composite::after {
@@ -245,20 +251,13 @@
             z-index: 0;
             pointer-events: none;
         }
+        /* 円のまわりのにじみ（後光） */
         .banner-composite::before {
-            background:
-                linear-gradient(126deg, transparent 0 48%, rgba(255, 122, 28, 0.46) 48.2% 48.7%, transparent 49%),
-                linear-gradient(38deg, transparent 0 70%, rgba(36, 86, 230, 0.20) 70.2% 70.6%, transparent 71%),
-                radial-gradient(circle at 73% 72%, rgba(255, 122, 28, 0.22), transparent 24%),
-                radial-gradient(circle at 89% 18%, rgba(36, 86, 230, 0.18), transparent 26%);
+            background: radial-gradient(circle at 79.7% 46.6%, rgba(255, 140, 50, 0.20), transparent 34%);
         }
+        /* 四隅を少し沈める */
         .banner-composite::after {
-            opacity: 0.46;
-            background:
-                linear-gradient(rgba(255, 122, 28, 0.17) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 122, 28, 0.12) 1px, transparent 1px);
-            background-size: 30px 30px;
-            mask-image: linear-gradient(90deg, transparent 0 42%, #000 60%, #000 100%);
+            background: radial-gradient(ellipse at 55% 50%, transparent 58%, rgba(0, 0, 0, 0.28) 100%);
         }
         .banner-vector-bg {
             position: absolute;
@@ -318,33 +317,20 @@
             transform: translateY(-50%);
             margin: 0;
             color: var(--orange);
-            font-family: var(--font-score);
+            font-family: 'Tektur', var(--font-score);
+            font-weight: 900;
             font-size: clamp(1.3rem, 3.2vw, 2.65rem);
             line-height: 0.95;
             letter-spacing: 0;
             text-shadow:
-                2px 0 0 rgba(255, 255, 255, 0.92),
-                -2px 0 0 rgba(255, 255, 255, 0.92),
-                0 2px 0 rgba(255, 255, 255, 0.92),
-                0 -2px 0 rgba(255, 255, 255, 0.92);
+                2px 0 0 rgba(22, 22, 24, 0.9),
+                -2px 0 0 rgba(22, 22, 24, 0.9),
+                0 2px 0 rgba(22, 22, 24, 0.9),
+                0 -2px 0 rgba(22, 22, 24, 0.9);
             white-space: nowrap;
         }
         .banner-title .dot-com {
-            color: #1b1d24;
-        }
-        .banner-title small {
-            display: block;
-            color: #1b1d24;
-            font-family: var(--font-pixel);
-            font-size: 12px;
-            font-weight: normal;
-            letter-spacing: 1px;
-            margin-top: 8px;
-            text-shadow:
-                1px 0 0 rgba(255, 255, 255, 0.95),
-                -1px 0 0 rgba(255, 255, 255, 0.95),
-                0 1px 0 rgba(255, 255, 255, 0.95),
-                0 -1px 0 rgba(255, 255, 255, 0.95);
+            color: #fbefe2;
         }
 
         /* ===== レイアウト ===== */
@@ -919,7 +905,6 @@
                 width: 52%;
                 font-size: clamp(1rem, 5.4vw, 1.45rem);
             }
-            .banner-title small { margin-top: 5px; }
         }
 
         /* ===== 背景：観測図（止まった層と動く層。どちらも SVG） ===== */
@@ -1004,29 +989,25 @@
             <div class="window-body">
                 <div class="banner-composite" aria-label="ThunFasky Banner">
                     <svg class="banner-vector-bg" viewBox="0 0 2672 1503" preserveAspectRatio="none" aria-hidden="true">
-                        <polygon points="1290,0 2672,0 2672,1503 1820,1503" fill="rgba(255,122,28,0.22)" />
-                        <polygon points="1730,0 2200,0 1560,1503 1140,1503" fill="rgba(255,122,28,0.16)" />
-                        <polygon points="2130,0 2672,0 2230,500" fill="rgba(36,86,230,0.15)" />
-                        <polyline points="1220,1220 1510,930 1710,1120 1960,700 2390,860" fill="none" stroke="rgba(255,122,28,0.60)" stroke-width="9" stroke-linejoin="round" />
-                        <polyline points="1460,210 1720,360 1960,180 2280,390 2520,250" fill="none" stroke="rgba(36,86,230,0.24)" stroke-width="7" stroke-linejoin="round" />
-                        <g stroke="rgba(255,122,28,0.52)" stroke-width="6" fill="none">
-                            <path d="M1540 190h120v120h-120z" />
-                            <path d="M2320 1040h150v150h-150z" />
-                            <path d="M1360 790h80v80h-80z" />
-                        </g>
-                        <g fill="rgba(255,122,28,0.34)">
-                            <circle cx="1500" cy="1320" r="16" />
-                            <circle cx="1580" cy="1320" r="16" />
-                            <circle cx="1660" cy="1320" r="16" />
-                            <circle cx="1740" cy="1320" r="16" />
-                        </g>
+                        <defs><linearGradient id="hero-sun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a45" /><stop offset="1" stop-color="#ff7518" /></linearGradient></defs>
+                        <polygon points="2667,-60 3133,-60 1510,1563 1044,1563" fill="#3c3c3f" />
+                        <polygon points="215,900 385,900 -218,1503 -388,1503" fill="#323235" />
+                        <polygon points="3341,-60 3439,-60 1816,1563 1718,1563" fill="#3c3c3f" />
+                        <g fill="#ff7518" opacity="0.85"><circle cx="30" cy="30" r="14.3" /><circle cx="74" cy="30" r="13.7" /><circle cx="118" cy="30" r="13.0" /><circle cx="162" cy="30" r="12.3" /><circle cx="206" cy="30" r="11.5" /><circle cx="250" cy="30" r="10.8" /><circle cx="294" cy="30" r="10.1" /><circle cx="338" cy="30" r="9.4" /><circle cx="382" cy="30" r="8.6" /><circle cx="426" cy="30" r="7.9" /><circle cx="470" cy="30" r="7.2" /><circle cx="514" cy="30" r="6.4" /><circle cx="558" cy="30" r="5.7" /><circle cx="602" cy="30" r="5.0" /><circle cx="646" cy="30" r="4.2" /><circle cx="52" cy="74" r="13.5" /><circle cx="96" cy="74" r="13.0" /><circle cx="140" cy="74" r="12.4" /><circle cx="184" cy="74" r="11.7" /><circle cx="228" cy="74" r="11.0" /><circle cx="272" cy="74" r="10.3" /><circle cx="316" cy="74" r="9.6" /><circle cx="360" cy="74" r="8.9" /><circle cx="404" cy="74" r="8.2" /><circle cx="448" cy="74" r="7.4" /><circle cx="492" cy="74" r="6.7" /><circle cx="536" cy="74" r="6.0" /><circle cx="580" cy="74" r="5.3" /><circle cx="624" cy="74" r="4.6" /><circle cx="668" cy="74" r="3.8" /><circle cx="30" cy="118" r="13.0" /><circle cx="74" cy="118" r="12.7" /><circle cx="118" cy="118" r="12.2" /><circle cx="162" cy="118" r="11.7" /><circle cx="206" cy="118" r="11.1" /><circle cx="250" cy="118" r="10.4" /><circle cx="294" cy="118" r="9.7" /><circle cx="338" cy="118" r="9.0" /><circle cx="382" cy="118" r="8.4" /><circle cx="426" cy="118" r="7.6" /><circle cx="470" cy="118" r="6.9" /><circle cx="514" cy="118" r="6.2" /><circle cx="558" cy="118" r="5.5" /><circle cx="602" cy="118" r="4.8" /><circle cx="646" cy="118" r="4.1" /><circle cx="52" cy="162" r="12.2" /><circle cx="96" cy="162" r="11.9" /><circle cx="140" cy="162" r="11.4" /><circle cx="184" cy="162" r="10.9" /><circle cx="228" cy="162" r="10.3" /><circle cx="272" cy="162" r="9.7" /><circle cx="316" cy="162" r="9.1" /><circle cx="360" cy="162" r="8.4" /><circle cx="404" cy="162" r="7.8" /><circle cx="448" cy="162" r="7.1" /><circle cx="492" cy="162" r="6.4" /><circle cx="536" cy="162" r="5.7" /><circle cx="580" cy="162" r="5.0" /><circle cx="624" cy="162" r="4.3" /><circle cx="668" cy="162" r="3.6" /><circle cx="30" cy="206" r="11.5" /><circle cx="74" cy="206" r="11.4" /><circle cx="118" cy="206" r="11.1" /><circle cx="162" cy="206" r="10.6" /><circle cx="206" cy="206" r="10.2" /><circle cx="250" cy="206" r="9.6" /><circle cx="294" cy="206" r="9.0" /><circle cx="338" cy="206" r="8.4" /><circle cx="382" cy="206" r="7.8" /><circle cx="426" cy="206" r="7.1" /><circle cx="470" cy="206" r="6.5" /><circle cx="514" cy="206" r="5.8" /><circle cx="558" cy="206" r="5.1" /><circle cx="602" cy="206" r="4.4" /><circle cx="646" cy="206" r="3.7" /><circle cx="52" cy="250" r="10.8" /><circle cx="96" cy="250" r="10.5" /><circle cx="140" cy="250" r="10.2" /><circle cx="184" cy="250" r="9.8" /><circle cx="228" cy="250" r="9.4" /><circle cx="272" cy="250" r="8.9" /><circle cx="316" cy="250" r="8.3" /><circle cx="360" cy="250" r="7.7" /><circle cx="404" cy="250" r="7.1" /><circle cx="448" cy="250" r="6.5" /><circle cx="492" cy="250" r="5.8" /><circle cx="536" cy="250" r="5.2" /><circle cx="580" cy="250" r="4.5" /><circle cx="624" cy="250" r="3.8" /><circle cx="668" cy="250" r="3.1" /><circle cx="30" cy="294" r="10.1" /><circle cx="74" cy="294" r="10.0" /><circle cx="118" cy="294" r="9.7" /><circle cx="162" cy="294" r="9.4" /><circle cx="206" cy="294" r="9.0" /><circle cx="250" cy="294" r="8.6" /><circle cx="294" cy="294" r="8.1" /><circle cx="338" cy="294" r="7.6" /><circle cx="382" cy="294" r="7.0" /><circle cx="426" cy="294" r="6.4" /><circle cx="470" cy="294" r="5.8" /><circle cx="514" cy="294" r="5.2" /><circle cx="558" cy="294" r="4.5" /><circle cx="602" cy="294" r="3.9" /><circle cx="646" cy="294" r="3.2" /><circle cx="52" cy="338" r="9.3" /><circle cx="96" cy="338" r="9.2" /><circle cx="140" cy="338" r="8.9" /><circle cx="184" cy="338" r="8.6" /><circle cx="228" cy="338" r="8.2" /><circle cx="272" cy="338" r="7.8" /><circle cx="316" cy="338" r="7.3" /><circle cx="360" cy="338" r="6.8" /><circle cx="404" cy="338" r="6.2" /><circle cx="448" cy="338" r="5.7" /><circle cx="492" cy="338" r="5.1" /><circle cx="536" cy="338" r="4.5" /><circle cx="580" cy="338" r="3.8" /><circle cx="624" cy="338" r="3.2" /><circle cx="668" cy="338" r="2.5" /><circle cx="30" cy="382" r="8.6" /><circle cx="74" cy="382" r="8.5" /><circle cx="118" cy="382" r="8.4" /><circle cx="162" cy="382" r="8.1" /><circle cx="206" cy="382" r="7.8" /><circle cx="250" cy="382" r="7.4" /><circle cx="294" cy="382" r="7.0" /><circle cx="338" cy="382" r="6.5" /><circle cx="382" cy="382" r="6.0" /><circle cx="426" cy="382" r="5.5" /><circle cx="470" cy="382" r="4.9" /><circle cx="514" cy="382" r="4.3" /><circle cx="558" cy="382" r="3.8" /><circle cx="602" cy="382" r="3.1" /><circle cx="646" cy="382" r="2.5" /></g>
+                        <g fill="#ff7518" opacity="0.85"><circle cx="1920" cy="1080" r="2.8" /><circle cx="1964" cy="1080" r="3.3" /><circle cx="2008" cy="1080" r="3.9" /><circle cx="2052" cy="1080" r="4.4" /><circle cx="2096" cy="1080" r="4.9" /><circle cx="2140" cy="1080" r="5.4" /><circle cx="2184" cy="1080" r="5.9" /><circle cx="2228" cy="1080" r="6.3" /><circle cx="2272" cy="1080" r="6.8" /><circle cx="2316" cy="1080" r="7.2" /><circle cx="2360" cy="1080" r="7.6" /><circle cx="2404" cy="1080" r="7.9" /><circle cx="2448" cy="1080" r="8.2" /><circle cx="2492" cy="1080" r="8.5" /><circle cx="2536" cy="1080" r="8.7" /><circle cx="2580" cy="1080" r="8.9" /><circle cx="2624" cy="1080" r="9.0" /><circle cx="2668" cy="1080" r="9.0" /><circle cx="1942" cy="1124" r="3.4" /><circle cx="1986" cy="1124" r="3.9" /><circle cx="2030" cy="1124" r="4.5" /><circle cx="2074" cy="1124" r="5.0" /><circle cx="2118" cy="1124" r="5.5" /><circle cx="2162" cy="1124" r="6.0" /><circle cx="2206" cy="1124" r="6.5" /><circle cx="2250" cy="1124" r="7.0" /><circle cx="2294" cy="1124" r="7.4" /><circle cx="2338" cy="1124" r="7.9" /><circle cx="2382" cy="1124" r="8.3" /><circle cx="2426" cy="1124" r="8.6" /><circle cx="2470" cy="1124" r="8.9" /><circle cx="2514" cy="1124" r="9.2" /><circle cx="2558" cy="1124" r="9.4" /><circle cx="2602" cy="1124" r="9.6" /><circle cx="2646" cy="1124" r="9.6" /><circle cx="2690" cy="1124" r="9.6" /><circle cx="1920" cy="1168" r="3.4" /><circle cx="1964" cy="1168" r="3.9" /><circle cx="2008" cy="1168" r="4.5" /><circle cx="2052" cy="1168" r="5.0" /><circle cx="2096" cy="1168" r="5.6" /><circle cx="2140" cy="1168" r="6.1" /><circle cx="2184" cy="1168" r="6.6" /><circle cx="2228" cy="1168" r="7.1" /><circle cx="2272" cy="1168" r="7.6" /><circle cx="2316" cy="1168" r="8.1" /><circle cx="2360" cy="1168" r="8.5" /><circle cx="2404" cy="1168" r="8.9" /><circle cx="2448" cy="1168" r="9.3" /><circle cx="2492" cy="1168" r="9.6" /><circle cx="2536" cy="1168" r="9.9" /><circle cx="2580" cy="1168" r="10.1" /><circle cx="2624" cy="1168" r="10.2" /><circle cx="2668" cy="1168" r="10.3" /><circle cx="1942" cy="1212" r="3.9" /><circle cx="1986" cy="1212" r="4.5" /><circle cx="2030" cy="1212" r="5.0" /><circle cx="2074" cy="1212" r="5.6" /><circle cx="2118" cy="1212" r="6.2" /><circle cx="2162" cy="1212" r="6.7" /><circle cx="2206" cy="1212" r="7.2" /><circle cx="2250" cy="1212" r="7.8" /><circle cx="2294" cy="1212" r="8.3" /><circle cx="2338" cy="1212" r="8.7" /><circle cx="2382" cy="1212" r="9.2" /><circle cx="2426" cy="1212" r="9.6" /><circle cx="2470" cy="1212" r="10.0" /><circle cx="2514" cy="1212" r="10.3" /><circle cx="2558" cy="1212" r="10.6" /><circle cx="2602" cy="1212" r="10.8" /><circle cx="2646" cy="1212" r="10.9" /><circle cx="2690" cy="1212" r="10.9" /><circle cx="1920" cy="1256" r="3.8" /><circle cx="1964" cy="1256" r="4.4" /><circle cx="2008" cy="1256" r="5.0" /><circle cx="2052" cy="1256" r="5.6" /><circle cx="2096" cy="1256" r="6.1" /><circle cx="2140" cy="1256" r="6.7" /><circle cx="2184" cy="1256" r="7.3" /><circle cx="2228" cy="1256" r="7.8" /><circle cx="2272" cy="1256" r="8.4" /><circle cx="2316" cy="1256" r="8.9" /><circle cx="2360" cy="1256" r="9.4" /><circle cx="2404" cy="1256" r="9.9" /><circle cx="2448" cy="1256" r="10.3" /><circle cx="2492" cy="1256" r="10.7" /><circle cx="2536" cy="1256" r="11.0" /><circle cx="2580" cy="1256" r="11.3" /><circle cx="2624" cy="1256" r="11.4" /><circle cx="2668" cy="1256" r="11.5" /><circle cx="1942" cy="1300" r="4.3" /><circle cx="1986" cy="1300" r="4.9" /><circle cx="2030" cy="1300" r="5.5" /><circle cx="2074" cy="1300" r="6.1" /><circle cx="2118" cy="1300" r="6.7" /><circle cx="2162" cy="1300" r="7.2" /><circle cx="2206" cy="1300" r="7.8" /><circle cx="2250" cy="1300" r="8.4" /><circle cx="2294" cy="1300" r="8.9" /><circle cx="2338" cy="1300" r="9.5" /><circle cx="2382" cy="1300" r="10.0" /><circle cx="2426" cy="1300" r="10.5" /><circle cx="2470" cy="1300" r="11.0" /><circle cx="2514" cy="1300" r="11.4" /><circle cx="2558" cy="1300" r="11.7" /><circle cx="2602" cy="1300" r="12.0" /><circle cx="2646" cy="1300" r="12.1" /><circle cx="2690" cy="1300" r="12.1" /><circle cx="1920" cy="1344" r="4.1" /><circle cx="1964" cy="1344" r="4.7" /><circle cx="2008" cy="1344" r="5.4" /><circle cx="2052" cy="1344" r="6.0" /><circle cx="2096" cy="1344" r="6.6" /><circle cx="2140" cy="1344" r="7.2" /><circle cx="2184" cy="1344" r="7.7" /><circle cx="2228" cy="1344" r="8.3" /><circle cx="2272" cy="1344" r="8.9" /><circle cx="2316" cy="1344" r="9.5" /><circle cx="2360" cy="1344" r="10.1" /><circle cx="2404" cy="1344" r="10.6" /><circle cx="2448" cy="1344" r="11.1" /><circle cx="2492" cy="1344" r="11.6" /><circle cx="2536" cy="1344" r="12.0" /><circle cx="2580" cy="1344" r="12.4" /><circle cx="2624" cy="1344" r="12.7" /><circle cx="2668" cy="1344" r="12.8" /><circle cx="1942" cy="1388" r="4.6" /><circle cx="1986" cy="1388" r="5.2" /><circle cx="2030" cy="1388" r="5.8" /><circle cx="2074" cy="1388" r="6.4" /><circle cx="2118" cy="1388" r="7.0" /><circle cx="2162" cy="1388" r="7.6" /><circle cx="2206" cy="1388" r="8.2" /><circle cx="2250" cy="1388" r="8.8" /><circle cx="2294" cy="1388" r="9.4" /><circle cx="2338" cy="1388" r="10.0" /><circle cx="2382" cy="1388" r="10.6" /><circle cx="2426" cy="1388" r="11.2" /><circle cx="2470" cy="1388" r="11.7" /><circle cx="2514" cy="1388" r="12.2" /><circle cx="2558" cy="1388" r="12.7" /><circle cx="2602" cy="1388" r="13.1" /><circle cx="2646" cy="1388" r="13.3" /><circle cx="2690" cy="1388" r="13.4" /><circle cx="1920" cy="1432" r="4.3" /><circle cx="1964" cy="1432" r="4.9" /><circle cx="2008" cy="1432" r="5.6" /><circle cx="2052" cy="1432" r="6.2" /><circle cx="2096" cy="1432" r="6.8" /><circle cx="2140" cy="1432" r="7.4" /><circle cx="2184" cy="1432" r="8.0" /><circle cx="2228" cy="1432" r="8.6" /><circle cx="2272" cy="1432" r="9.3" /><circle cx="2316" cy="1432" r="9.9" /><circle cx="2360" cy="1432" r="10.5" /><circle cx="2404" cy="1432" r="11.1" /><circle cx="2448" cy="1432" r="11.7" /><circle cx="2492" cy="1432" r="12.3" /><circle cx="2536" cy="1432" r="12.8" /><circle cx="2580" cy="1432" r="13.4" /><circle cx="2624" cy="1432" r="13.8" /><circle cx="2668" cy="1432" r="14.0" /><circle cx="1942" cy="1476" r="4.7" /><circle cx="1986" cy="1476" r="5.3" /><circle cx="2030" cy="1476" r="5.9" /><circle cx="2074" cy="1476" r="6.5" /><circle cx="2118" cy="1476" r="7.2" /><circle cx="2162" cy="1476" r="7.8" /><circle cx="2206" cy="1476" r="8.4" /><circle cx="2250" cy="1476" r="9.0" /><circle cx="2294" cy="1476" r="9.6" /><circle cx="2338" cy="1476" r="10.3" /><circle cx="2382" cy="1476" r="10.9" /><circle cx="2426" cy="1476" r="11.5" /><circle cx="2470" cy="1476" r="12.1" /><circle cx="2514" cy="1476" r="12.7" /><circle cx="2558" cy="1476" r="13.3" /><circle cx="2602" cy="1476" r="13.9" /><circle cx="2646" cy="1476" r="14.5" /><circle cx="2690" cy="1476" r="14.5" /></g>
+                        <circle cx="2130" cy="700" r="610" fill="url(#hero-sun)" />
+                        <polygon points="2839,160 2871,160 1528,1503 1496,1503" fill="#ff7518" />
+                        <polygon points="2615,760 2785,760 2042,1503 1872,1503" fill="#ff7518" />
+                        <polygon points="491,960 589,960 46,1503 -52,1503" fill="#fbefe2" />
+                        <polygon points="643,980 677,980 154,1503 120,1503" fill="#ff7518" />
+                        <polygon points="576,1180 704,1180 381,1503 253,1503" fill="#ff7518" />
+                        <polygon points="389,900 411,900 -192,1503 -214,1503" fill="#fbefe2" opacity="0.9" />
+                        <g><rect x="1440" y="250" width="70" height="70" fill="#ff7518" /><rect x="1560" y="380" width="26" height="26" fill="#fbefe2" /><rect x="1380" y="1180" width="56" height="56" fill="#ff7518" /><rect x="1490" y="1060" width="34" height="34" fill="#fbefe2" /><rect x="760" y="210" width="40" height="40" fill="#ff7518" /><rect x="2560" y="130" width="44" height="44" fill="#fbefe2" /></g>
                     </svg>
                     <img class="banner-layer banner-outline" src="images/website fio colorOnly.png" alt="">
                     <img class="banner-layer banner-color" src="images/website fio colorOnly.png" alt="">
                     <img class="banner-layer banner-line" src="images/website fio lineOnly.png" alt="">
-                    <h1 class="banner-title">ThunFasky<span class="dot-com">.com</span>
-                        <small>ThunFaskyのサイト</small>
-                    </h1>
+                    <h1 class="banner-title">ThunFasky<span class="dot-com">.com</span></h1>
                 </div>
             </div>
         </div>
