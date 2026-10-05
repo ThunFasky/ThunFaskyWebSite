@@ -489,6 +489,48 @@
         }
         .media-item .credits { overflow-wrap: anywhere; }
 
+        /* 最小化したカードを入れるトレイ（JS で各 .media-grid のすぐ下に作る）。
+           カードはバーだけになってここに移り、何個あっても折り返して並ぶ */
+        .media-grid { position: relative; } /* 戻したカードの位置（offsetLeft）を一覧の中の座標で取るため */
+        .media-grid[hidden], .min-tray[hidden] { display: none; }
+        .min-tray {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 12px;
+            padding: 10px 12px;
+            background: rgba(3, 7, 17, 0.72);
+            border: 1px dashed rgba(255, 117, 24, 0.28);
+        }
+        .min-tray::before {
+            content: 'MINIMIZED';
+            margin-right: 2px;
+            font-family: var(--font-score);
+            font-size: 0.66rem;
+            letter-spacing: 2px;
+            color: var(--w45);
+        }
+        .min-tray > .window {
+            flex: 0 1 auto;
+            min-width: min(100%, 170px);
+            max-width: 100%;
+            box-shadow: 0 0 0 1px rgba(255, 117, 24, 0.25), 0 6px 18px rgba(0, 0, 0, 0.45);
+        }
+        /* 小さいバーには四隅のブラケットと辺のマーカーを付けない */
+        .min-tray > .window::before, .min-tray > .window::after { display: none; }
+        .min-tray .window-bar { border-bottom: none; }
+        .min-tray > .window:hover .window-bar {
+            background:
+                linear-gradient(90deg, rgba(255, 117, 24, 0.32), rgba(255, 117, 24, 0.10) 52%, rgba(255, 255, 255, 0.06)),
+                rgba(4, 8, 19, 0.82);
+        }
+        /* バーのどこを押しても元に戻せるように、ボタンの押せる範囲をバー全体に広げる */
+        .min-tray .win-btn::after { content: ''; position: absolute; inset: 0; }
+        .min-tray > .window.anim-show { animation: trayIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        @keyframes trayIn {
+            from { opacity: 0; transform: translateY(-14px) scale(0.92); }
+        }
+
         /* ===== 画像グリッド ===== */
         .collage-grid {
             display: grid;
@@ -870,6 +912,8 @@
         @media (max-width: 560px) {
             .game-info { grid-template-columns: minmax(0, 1fr); }
             .devlog-item { grid-template-columns: minmax(0, 1fr); }
+            /* 狭い画面では横に 2 つ並ばないので、幅をそろえて 1 行に 1 つずつ */
+            .min-tray > .window { flex-basis: 100%; }
         }
 
         @media (max-width: 430px) {
@@ -1451,19 +1495,51 @@
 
         
         /* --- ウィンドウの最小化（画像ビューアのモーダル以外） --- */
+        // 横に並んだカード（.media-grid の中）は、最小化するとバーだけになって一覧の下のトレイにまとまる。
+        // 元に戻すと一覧の元の位置へ帰る。全部しまったら一覧の枠ごと隠す
+        function minTrayOf(grid) {
+            if (grid.nextElementSibling && grid.nextElementSibling.classList.contains('min-tray')) return grid.nextElementSibling;
+            const tray = document.createElement('div');
+            tray.className = 'min-tray';
+            tray.setAttribute('role', 'group');
+            tray.setAttribute('aria-label', '最小化したウィンドウ');
+            tray.hidden = true;
+            grid.after(tray);
+            return tray;
+        }
         document.querySelectorAll('.window').forEach(win => {
             if (win.closest('.modal')) return;
             const controls = win.querySelector(':scope > .window-bar .win-controls');
             if (!controls) return;
+            // トレイに並ぶと「元に戻す」ばかりになるので、読み上げ用のラベルにウィンドウ名を入れる
+            const title = win.querySelector(':scope > .window-bar .win-title');
+            const name = title ? title.textContent.trim() + ' を' : '';
+            const grid = win.parentElement.classList.contains('media-grid') ? win.parentElement : null;
+            const tray = grid && minTrayOf(grid);
+            const slot = grid && document.createComment(' 最小化中のカードの元の位置 ');
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'win-btn win-min';
-            btn.setAttribute('aria-label', '最小化');
+            btn.setAttribute('aria-label', name + '最小化');
             btn.setAttribute('aria-expanded', 'true');
             btn.addEventListener('click', () => {
                 const collapsed = win.classList.toggle('collapsed');
-                btn.setAttribute('aria-label', collapsed ? '元に戻す' : '最小化');
+                btn.setAttribute('aria-label', name + (collapsed ? '元に戻す' : '最小化'));
                 btn.setAttribute('aria-expanded', String(!collapsed));
+                if (!grid) return;
+                const focused = document.activeElement === btn;
+                if (collapsed) { win.before(slot); tray.appendChild(win); }
+                else slot.replaceWith(win);
+                tray.hidden = !tray.children.length;
+                grid.hidden = !grid.children.length;
+                // 移すとフォーカスが外れるので付け直す（キーボードでそのまま戻せるように）
+                if (focused) btn.focus({ preventScroll: true });
+                if (!collapsed) {
+                    // 戻したカードが一覧の見えていないところに入ったら、そこまでスクロールする
+                    const x = win.offsetLeft;
+                    grid.scrollLeft = Math.min(x, Math.max(grid.scrollLeft, x + win.offsetWidth - grid.clientWidth));
+                    grid.scrollIntoView({ block: 'nearest' });
+                }
             });
             controls.appendChild(btn);
         });
