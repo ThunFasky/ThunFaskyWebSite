@@ -488,6 +488,8 @@
             font-weight: bold;
         }
         .media-item .credits { overflow-wrap: anywhere; }
+        /* アプリのダウンロードボタン（Play と同じ見た目）。GitHub の最新リリースのページを新しいタブで開く */
+        .media-item .app-download { width: fit-content; margin-top: 14px; }
 
         /* 最小化したカードを入れるトレイ（JS で各 .media-grid のすぐ下に作る）。
            カードはバーだけになってここに移り、何個あっても折り返して並ぶ */
@@ -1114,6 +1116,7 @@
                     <div class="window-body">
                         <img src="images/SoyokazeMemoApp.png" alt="SoyokazeMemo" onclick="openModal(this.src, 'SoyokazeMemo')">
                         <div class="caption"><strong class="font-digital">SoyokazeMemo</strong><br>一時的な手書きメモ　コピペなどするときに</div>
+                        <a href="https://github.com/ThunFasky/SoyokazeMemo/releases/latest" class="btn-link btn-primary app-download" target="_blank" rel="noopener noreferrer">Download</a>
                     </div>
                 </div>
             </div>
