@@ -474,7 +474,8 @@
             display: block;
             object-fit: cover;
         }
-        .media-item .window-body > img { cursor: pointer; }
+        /* 縦長のスクリーンショットでもタイトルバーが切れないよう、正方形に切り抜くときは上に寄せる */
+        .media-item .window-body > img { cursor: pointer; object-position: top; }
         .media-item .caption {
             margin-top: 12px;
             font-size: 0.84rem;
