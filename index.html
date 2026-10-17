@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ThunFasky.com</title>
+    <!-- タブのアイコン（誕生日カウントダウンと同じ絵）。favicon.ico は 16・32・48px 入り、192px はスマホや検索結果用 -->
+    <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+    <link rel="icon" href="images/favicon-192.png" type="image/png" sizes="192x192">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -474,7 +477,8 @@
             display: block;
             object-fit: cover;
         }
-        .media-item .window-body > img { cursor: pointer; }
+        /* 縦長のスクリーンショットでもタイトルバーが切れないよう、正方形に切り抜くときは上に寄せる */
+        .media-item .window-body > img { cursor: pointer; object-position: top; }
         .media-item .caption {
             margin-top: 12px;
             font-size: 0.84rem;
