@@ -609,11 +609,13 @@
             padding: 54px 20px 34px;
         }
         .modal.show { opacity: 1; }
+        /* 幅は中の画像に合わせる。縦長・正方形の画像では今までどおり 880px、
+           横長の画像のときだけ画像に合わせて広がる（画面幅の 90% まで） */
         .modal-window {
             display: flex;
             flex-direction: column;
-            width: min(880px, 92vw);
-            max-width: 90vw;
+            min-width: min(880px, 90vw, 100%);
+            max-width: min(90vw, 100%);
             max-height: calc(100vh - 88px);
             cursor: default;
             transform: scale(0.92);
@@ -628,7 +630,7 @@
         }
         .modal-content {
             display: block;
-            max-width: 84vw;
+            max-width: 100%; /* 窓からはみ出して見切れないように */
             max-height: 58vh;
             object-fit: contain;
             margin: 0 auto;
@@ -640,6 +642,7 @@
             font-size: 24px;
             text-align: left;
             font-family: var(--font-pixel);
+            contain: inline-size; /* 長いキャプションで窓を広げない（窓の幅で折り返す） */
         }
         .credits {
             margin-top: 10px;
