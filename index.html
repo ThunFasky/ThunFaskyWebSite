@@ -558,6 +558,8 @@
             overflow: hidden;
             position: relative;
         }
+        /* 一覧では、どの画像も短い辺に合わせた正方形に中央で切り抜く（透過画像も同じ）。
+           クリックすると拡大表示で、元の比率のまま全体が出る */
         .collage-item img {
             width: 100%; height: 100%;
             object-fit: cover;
@@ -566,8 +568,6 @@
             cursor: pointer;
             display: block;
         }
-        /* 透過画像は切り抜かず全体を表示 */
-        .collage-item img.is-transparent { object-fit: contain; }
         .collage-item img:hover { transform: scale(1.05); filter: brightness(1.1); }
         .empty-data {
             display: flex;
@@ -1353,7 +1353,6 @@
                 el.src = thumbUrl(img.src);
                 el.alt = fixedAlt || img.caption || '';
                 el.loading = 'lazy';
-                if (isTp) el.classList.add('is-transparent');
                 el.onclick = () => openModal(img.src, img.caption || '', isTp);
                 fig.appendChild(el);
                 grid.appendChild(fig);
