@@ -78,6 +78,14 @@
 
         a { color: var(--white); }
 
+        /* 画像の保存よけ：ドラッグで持ち出せない・スマホの長押しで保存メニューを出さない・選択しない
+           （右クリックとコピーは下の JS で止める） */
+        img {
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
         /* ===== ウィンドウ枠 ===== */
         .window {
             position: relative;
@@ -1478,6 +1486,22 @@
             setTimeout(() => { modal.style.display = 'none'; }, 300);
         }
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+        /* --- 画像の保存よけ（右クリック・ドラッグ・コピー） ---
+           画像と、ThunDecky のジャケットを描く canvas では、右クリックメニュー（保存・コピー）を出さず、ドラッグでも持ち出せない。
+           範囲を選んでコピーしたときに画像が入っていたら、画像を外して文字だけをコピーする。
+           スクリーンショットや開発者ツールまでは防げないので、気軽に保存させないための目隠し */
+        const isProtectedMedia = el => el instanceof Element && !!el.closest('img, canvas');
+        document.addEventListener('contextmenu', e => { if (isProtectedMedia(e.target)) e.preventDefault(); });
+        document.addEventListener('dragstart', e => { if (isProtectedMedia(e.target)) e.preventDefault(); });
+        document.addEventListener('copy', e => {
+            const sel = getSelection();
+            let hasImage = false;
+            for (let i = 0; i < sel.rangeCount && !hasImage; i++) hasImage = !!sel.getRangeAt(i).cloneContents().querySelector('img');
+            if (!hasImage) return;
+            e.preventDefault();
+            e.clipboardData.setData('text/plain', sel.toString());
+        });
 
         
         const BIRTH = new Date(2006, 11, 12); // 2006/12/12
