@@ -7,6 +7,8 @@
     <!-- タブのアイコン（誕生日カウントダウンと同じ絵）。favicon.ico は 16・32・48px 入り、192px はスマホや検索結果用 -->
     <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
     <link rel="icon" href="images/favicon-192.png" type="image/png" sizes="192x192">
+    <!-- 検索エンジン向け：このページの画像は画像検索に出さない（ページ自体は今までどおり検索に出る） -->
+    <meta name="robots" content="noimageindex">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -1286,6 +1288,9 @@
             // { src: 'images/gallery/photo1.png', caption: '' },
         ];
         const INITIAL_SHOW = 4;
+        // アクティビティギャラリーの説明文（人名・イベント名など）は検索エンジンに拾わせない。
+        // 画像の alt には決まった文を入れ、説明文はクリックして拡大したときだけ出す（検索エンジンはクリックしないので読まない）
+        const GALLERY_ALT = 'アクティビティギャラリーの写真';
         
         function isTransparentCandidate(src) {
             return /\.(png|webp|gif|avif)$/i.test((src || '').split('?')[0]);
@@ -1328,7 +1333,7 @@
             return { illust, gallery };
         }
 
-        function buildGrid(gridId, moreId, images) {
+        function buildGrid(gridId, moreId, images, fixedAlt) {
             const grid = document.getElementById(gridId);
             const moreBtn = document.getElementById(moreId);
             if (!grid) return;
@@ -1346,7 +1351,7 @@
                 fig.className = 'collage-item' + (i >= INITIAL_SHOW ? ' hidden-item' : '');
                 const el = document.createElement('img');
                 el.src = thumbUrl(img.src);
-                el.alt = img.caption || '';
+                el.alt = fixedAlt || img.caption || '';
                 el.loading = 'lazy';
                 if (isTp) el.classList.add('is-transparent');
                 el.onclick = () => openModal(img.src, img.caption || '', isTp);
@@ -1374,12 +1379,12 @@
                 illust = illust.concat(cms.illust);
                 gallery = gallery.concat(cms.gallery);
                 buildGrid('illust-grid', 'illust-more', illust);
-                buildGrid('gallery-grid', 'gallery-more', gallery);
+                buildGrid('gallery-grid', 'gallery-more', gallery, GALLERY_ALT);
             } catch (error) {
                 console.error(error);
                 if (illust.length > 0) buildGrid('illust-grid', 'illust-more', illust);
                 else showGridMessage('illust-grid', `読み込みエラー: ${error.message}`);
-                if (gallery.length > 0) buildGrid('gallery-grid', 'gallery-more', gallery);
+                if (gallery.length > 0) buildGrid('gallery-grid', 'gallery-more', gallery, GALLERY_ALT);
                 else showGridMessage('gallery-grid', '読み込みエラー');
             }
         }
