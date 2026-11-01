@@ -1,0 +1,7 @@
+Copyright notices embedded in the original SweiSansCJKjp-Black.ttf:
+
+
+
+Swei Sans modifications: Max / max32002
+https://github.com/max32002/swei-sans
+Distributed under SIL OFL 1.1; full text in SweiSans-OFL.txt.
