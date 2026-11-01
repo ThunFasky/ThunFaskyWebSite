@@ -1,0 +1,11 @@
+﻿ScoreDozer (x14y20pxScoreDozer) / スコアドーザー
+Author: hicc / 患者長ひっく
+Official source and original license: https://hicchicc.github.io/00ff/
+Local source font: Assets/TextMesh Pro/Resources/Fonts & Materials/x14y20pxScoreDozer.ttf
+SHA-256: 190AF4E826FE85C47B75D5D9838FF39F69EBFEFABD64A931FFAD4FECA1E92021
+
+2026-10-23: Existing project font reused without modifying its TrueType data.
+The author's Original License section permits commercial use, bundling the TTF with a game,
+and modification/redistribution. The font itself may not be sold. Attribution is optional.
+Original licensing remains applicable to this existing version during the author's OFL migration.
+The TMP bitmap atlas is generated at runtime. Main-font Japanese and Latin letters are unchanged.

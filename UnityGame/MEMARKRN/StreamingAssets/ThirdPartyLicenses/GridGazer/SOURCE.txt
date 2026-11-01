@@ -1,0 +1,16 @@
+GridGazer (x16y32pxGridGazer) / グリッドゲイザー
+Author: hicc / 患者長ひっく
+Official source and original license: https://hicchicc.github.io/00ff/
+Original download: https://hicchicc.github.io/00ff/x16y32pxGridGazer.ttf
+Version: 2019-06-26
+Local font: Assets/TextMesh Pro/Resources/Fonts & Materials/x16y32pxGridGazer.ttf
+SHA-256: DC905AAEC416696AED207D1A7769E93301D3DD4496C936E8F743300F8085B632
+
+2026-10-24: Original TTF imported unchanged after the user selected GridGazer.
+The author's Original License permits commercial use, bundling the TTF with a game,
+and modification/redistribution. The font itself may not be sold. Attribution is optional.
+This version remains under the original license during the author's OFL migration.
+The original license text is included in LICENSE.txt in this directory.
+
+The numeric/symbol TMP bitmap atlas is generated at runtime at 32pt.
+Japanese and Latin letters continue to use the main game font.
