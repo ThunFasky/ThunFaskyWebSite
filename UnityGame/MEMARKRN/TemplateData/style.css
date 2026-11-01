@@ -14,3 +14,19 @@ body { padding: 0; margin: 0 }
 #unity-build-title { float: right; margin-right: 10px; line-height: 38px; font-family: arial; font-size: 18px }
 #unity-fullscreen-button { cursor:pointer; float: right; width: 38px; height: 38px; background: url('fullscreen-button.png') no-repeat center }
 #unity-warning { position: absolute; left: 50%; top: 5%; transform: translate(-50%); background: white; padding: 10px; display: none }
+/* 【MEMARKRN 2026-11-01】入口（「遊ぶ」で別ウィンドウを開く）。色はポーズメニュー（PauseMenuTheme）の夜・月・選んでいる行に合わせる */
+body.memarkrn-launcher-body { background: #040816 }
+#memarkrn-launcher { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 24px; box-sizing: border-box; color: #8e9fca; font-family: "Yu Gothic UI", "Hiragino Sans", Meiryo, system-ui, sans-serif; text-align: center }
+#memarkrn-launcher[hidden] { display: none }
+#memarkrn-launcher-title { margin: 0 0 12px; color: #e6eeff; font-size: 44px; font-weight: 700; letter-spacing: 0.08em }
+#memarkrn-launcher-status { margin: 0; max-width: 46em; color: #e6eeff; font-size: 16px; line-height: 1.7; white-space: pre-line }
+#memarkrn-launcher-note { margin: 0; max-width: 40em; font-size: 14px; line-height: 1.7; white-space: pre-line }
+.memarkrn-button { min-width: 240px; padding: 12px 28px; border: 0; background: #a8e4f0; color: #0c1e38; font: inherit; font-size: 20px; font-weight: 700; cursor: pointer; box-shadow: 0 0 0 2px #040816, 0 0 0 4px #60bad8 }
+.memarkrn-button:hover, .memarkrn-button:focus-visible { background: #c4eef6; outline: none }
+.memarkrn-button-quiet { min-width: 0; padding: 6px 12px; background: transparent; color: #a9b9de; font-size: 16px; font-weight: 400; box-shadow: none; text-decoration: underline }
+.memarkrn-button-quiet:hover, .memarkrn-button-quiet:focus-visible { background: transparent; color: #e6eeff }
+/* ゲーム用の別ウィンドウ（?mode=window）：キャンバスをウィンドウいっぱいに。全画面を使わないので Esc で縮まない */
+body.memarkrn-game-window { background: #000; overflow: hidden }
+#unity-container.unity-window { position: fixed; inset: 0; width: 100%; height: 100% }
+.unity-window #unity-canvas { display: block; width: 100%; height: 100% }
+.unity-window #unity-footer { display: none }
