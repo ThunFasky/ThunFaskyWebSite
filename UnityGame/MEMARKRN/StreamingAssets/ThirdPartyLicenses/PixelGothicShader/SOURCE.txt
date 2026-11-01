@@ -1,0 +1,3 @@
+対象：Assets/_Game/Resources/Typography/ZenPixelGothic.shader（シェーダー名 MEMARKRN/Text/Pixel Gothic。全画面フォントのドット化）
+由来：TextMesh Pro の mobile SDF シェーダーを元にした（2026-10-12）。利用条件＝同じフォルダーの TextMeshPro-Unity-Companion-License.md
+経緯：2026-10-16 に Zen角ゴシックを削除したとき、ThirdPartyLicenses/ZenKakuGothicNew/ からここへ移した（シェーダーは今も使っている）

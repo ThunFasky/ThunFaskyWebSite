@@ -1,0 +1,8 @@
+Swei Sans JP Black / 獅尾黑體
+Author: Max / max32002
+Official source: https://github.com/max32002/swei-sans
+Revision: 061ddf9762d2475c56880778a5867bcb458d5e20
+SHA-256: 032D8CFEE8AF2B37504B923937F3CB0C08EA8255E8ED115B09984778CA23FEDD
+SIL OFL 1.1; see SweiSans-OFL.txt and SweiSans-README.md.
+2026-10-25: User selected this font for Japanese and Latin text. Original TTF unchanged.
+Numeric/symbol characters continue to use GridGazer.
