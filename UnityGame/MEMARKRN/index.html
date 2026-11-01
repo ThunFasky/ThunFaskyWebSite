@@ -1,15 +1,23 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="ja">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity Web Player | MEMARKRN</title>
+    <title>MEMARKRN</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
       <script src="TemplateData/unity-split-data.js"></script>
   </head>
   <body>
-    <div id="unity-container" class="unity-desktop">
+    <!-- 【MEMARKRN 2026-11-01】パソコンの入口：「遊ぶ」でゲームだけの別ウィンドウ（?mode=window）を開く。このページでは Unity を読み込まない -->
+    <div id="memarkrn-launcher" hidden>
+      <h1 id="memarkrn-launcher-title">MEMARKRN</h1>
+      <p id="memarkrn-launcher-status" hidden></p>
+      <button id="memarkrn-play-button" class="memarkrn-button" type="button"></button>
+      <button id="memarkrn-page-button" class="memarkrn-button memarkrn-button-quiet" type="button" hidden></button>
+      <p id="memarkrn-launcher-note"></p>
+    </div>
+    <div id="unity-container" class="unity-desktop" style="display: none">
       <canvas id="unity-canvas" width=960 height=540 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
@@ -25,6 +33,7 @@
       </div>
     </div>
     <script>
+      var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
       // メニュー用Backspaceのブラウザー既定動作だけを抑え、Unityにはキーを届ける。
       canvas.tabIndex = 0;
@@ -35,6 +44,15 @@
           event.preventDefault();
         }
       }, true);
+
+      // 【MEMARKRN 2026-11-01】全画面の間も Esc をゲーム（ポーズ・取り消し）へ渡す＝Keyboard Lock API（Chrome・Edge・最上位のページだけ）。
+      // 全画面をやめるのは Esc の長押し（約2秒・ブラウザが案内を出す）か、設定の「表示」。
+      // 対応しないブラウザ（Firefox・Safari）・iframe の中では今までどおり Esc で全画面が解ける（ゲームのメニューは Backspace でも開く）。
+      document.addEventListener("fullscreenchange", () => {
+        if (!navigator.keyboard || !navigator.keyboard.lock) return;
+        if (document.fullscreenElement) navigator.keyboard.lock(["Escape"]).catch(() => {});
+        else navigator.keyboard.unlock();
+      });
 
       // Shows a temporary message banner/ribbon for a few seconds, or
       // a permanent error message on top of the canvas if type=='error'.
@@ -71,7 +89,7 @@
         streamingAssetsUrl: "StreamingAssets",
         companyName: "ThunFasky",
         productName: "MEMARKRN",
-        productVersion: "0.1.0",
+        productVersion: "0.1.1",
         showBanner: unityShowBanner,
         // errorHandler: function(err, url, line) {
         //    alert("error " + err + " occurred at line " + line);
@@ -98,46 +116,171 @@
       // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
       // expected to change.
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
+      // 【MEMARKRN 2026-11-01】どの形で動くか：
+      //   スマホ・タブレット＝今までどおりこのページいっぱいで遊ぶ
+      //   ?mode=window＝入口が開いたゲーム用の別ウィンドウ。キャンバスをウィンドウいっぱいにする（全画面を使わない＝Esc で縮まない）
+      //   それ以外（パソコン）＝入口。「遊ぶ」で別ウィンドウを開く。ポップアップを止められたときだけ、このページの中でも遊べる
+      // ⚠️ セーブの置き場所（persistentDataPath）はページのあるフォルダーの URL で決まり、ファイル名とクエリは関係しない
+      //    ＝入口・別ウィンドウ・このページの中のどれで遊んでも同じセーブ。別ウィンドウを別のファイル・別のフォルダーに分けない
+      var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      var isGameWindow = !isMobile && new URLSearchParams(window.location.search).get("mode") === "window";
 
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        document.querySelector("#unity-container").className = "unity-mobile";
-        canvas.className = "unity-mobile";
+      var gameStarted = false;
+      function startGame() {
+        if (gameStarted) return; // 1つのページで Unity を2つ動かさない（同じセーブを2つが書き合う）
+        gameStarted = true;
+        document.querySelector("#memarkrn-launcher").hidden = true;
+        document.body.classList.remove("memarkrn-launcher-body");
+        container.style.display = "";
 
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
+        if (isMobile) {
+          // Mobile device style: fill the whole browser client area with the game canvas:
+
+          var meta = document.createElement('meta');
+          meta.name = 'viewport';
+          meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+          document.getElementsByTagName('head')[0].appendChild(meta);
+          container.className = "unity-mobile";
+          canvas.className = "unity-mobile";
+
+          // To lower canvas resolution on mobile devices to gain some
+          // performance, uncomment the following line:
+          // config.devicePixelRatio = 1;
 
 
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        canvas.style.width = "960px";
-        canvas.style.height = "540px";
+        } else if (isGameWindow) {
+          // ゲーム用の別ウィンドウ：ウィンドウの大きさに合わせてキャンバスを広げる（下の帯は出さない）
+          document.body.classList.add("memarkrn-game-window");
+          container.className = "unity-window";
+        } else {
+          // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+          canvas.style.width = "960px";
+          canvas.style.height = "540px";
+        }
+
+        document.querySelector("#unity-loading-bar").style.display = "block";
+
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+        script.onload = () => {
+          createUnityInstanceWithSplitData(canvas, config, (progress) => {
+            document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+                }).then((unityInstance) => {
+                  document.querySelector("#unity-loading-bar").style.display = "none";
+                  document.querySelector("#unity-fullscreen-button").onclick = () => {
+                    unityInstance.SetFullscreen(1);
+                  };
+
+                }).catch((message) => {
+                  alert(message);
+                });
+              };
+
+        document.body.appendChild(script);
       }
 
-      document.querySelector("#unity-loading-bar").style.display = "block";
+      // ---- 入口（パソコンのブラウザ）【MEMARKRN 2026-11-01】----
+      var GAME_WINDOW_NAME = "memarkrn_game";
+      var launcherText = /^ja\b/i.test(navigator.language || "") ? {
+        lang: "ja",
+        play: "遊ぶ",
+        note: "ゲーム用のウィンドウが開きます。\n終わるときは、ゲームの中の「ゲームを終了」でウィンドウが閉じます。",
+        playing: "別のウィンドウで遊んでいます。",
+        focus: "ゲームのウィンドウを前に出す",
+        blocked: "ポップアップがブロックされました。\nアドレスバーの表示からこのサイトのポップアップを許可して、もう一度「遊ぶ」を押してください。",
+        page: "このページで遊ぶ",
+      } : {
+        lang: "en",
+        play: "Play",
+        note: "The game opens in its own window.\nTo finish, choose “Quit Game” in the game and the window closes.",
+        playing: "The game is running in another window.",
+        focus: "Show the game window",
+        blocked: "The pop-up was blocked.\nAllow pop-ups for this site from the address bar, then press Play again.",
+        page: "Play in this page",
+      };
+      var gameWindow = null;
+      var gameWindowWatch = 0;
 
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstanceWithSplitData(canvas, config, (progress) => {
-          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-                document.querySelector("#unity-fullscreen-button").onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
+      function gameWindowUrl() {
+        var url = new URL(window.location.href);
+        url.searchParams.set("mode", "window");
+        url.hash = "";
+        return url.href;
+      }
 
-              }).catch((message) => {
-                alert(message);
-              });
-            };
+      // 中身（キャンバス）を 16:9 にして、今の画面に収まるいちばん大きい大きさで真ん中に開く。
+      // width／height は中身の大きさ。枠とアドレスバーの分（frameWidth／frameHeight）を引いておく
+      function gameWindowFeatures() {
+        var s = window.screen;
+        var frameWidth = 16, frameHeight = 88;
+        var width = Math.min(s.availWidth - frameWidth, Math.floor((s.availHeight - frameHeight) * 16 / 9));
+        width = Math.max(640, width);
+        var height = Math.round(width * 9 / 16);
+        var left = (s.availLeft || 0) + Math.max(0, Math.round((s.availWidth - width - frameWidth) / 2));
+        var top = (s.availTop || 0) + Math.max(0, Math.round((s.availHeight - height - frameHeight) / 2));
+        return "popup=yes,width=" + width + ",height=" + height + ",left=" + left + ",top=" + top;
+      }
 
-      document.body.appendChild(script);
+      function showLauncherState(state) {
+        var status = document.querySelector("#memarkrn-launcher-status");
+        status.hidden = state === "ready";
+        status.textContent = state === "playing" ? launcherText.playing : state === "blocked" ? launcherText.blocked : "";
+        document.querySelector("#memarkrn-play-button").textContent = state === "playing" ? launcherText.focus : launcherText.play;
+        document.querySelector("#memarkrn-page-button").hidden = state !== "blocked";
+      }
+
+      function watchGameWindow() {
+        clearInterval(gameWindowWatch);
+        gameWindowWatch = setInterval(() => {
+          if (gameWindow && !gameWindow.closed) return;
+          clearInterval(gameWindowWatch);
+          gameWindow = null;
+          showLauncherState("ready");
+        }, 500);
+      }
+
+      // ⚠️ ポップアップはクリックの中で開く（後から開くとブロックされる）。
+      // ⚠️ 名前付きで、まず空の URL で開く＝もう開いているゲームのウィンドウはそのまま返る（読み直してプレイを消さない）。
+      //    新しく開いた空のウィンドウだけゲームを読み込む。入口を読み直して gameWindow を忘れた後もこれで同じウィンドウを拾う
+      // ⚠️ noopener を付けない：ゲーム側は window.opener がある＝スクリプトで開かれた＝閉じられる、で終了ボタンを出す
+      function openGameWindow() {
+        if (gameWindow && !gameWindow.closed) {
+          gameWindow.focus();
+          return;
+        }
+        var opened = null;
+        try { opened = window.open("", GAME_WINDOW_NAME, gameWindowFeatures()); } catch (e) { opened = null; }
+        if (!opened) {
+          showLauncherState("blocked");
+          return;
+        }
+        var isBlank = true;
+        try { isBlank = opened.location.href === "about:blank"; } catch (e) { isBlank = false; }
+        if (isBlank) opened.location.replace(gameWindowUrl());
+        gameWindow = opened;
+        try { opened.focus(); } catch (e) {}
+        showLauncherState("playing");
+        watchGameWindow();
+      }
+
+      function showLauncher() {
+        // 閉じられなかったゲームのウィンドウが入口へ移ってきた場合、自分の名前のままだと「遊ぶ」が自分自身を拾ってしまう
+        if (window.name === GAME_WINDOW_NAME) window.name = "";
+        document.documentElement.lang = launcherText.lang;
+        document.querySelector("#memarkrn-launcher-note").textContent = launcherText.note;
+        document.querySelector("#memarkrn-page-button").textContent = launcherText.page;
+        document.querySelector("#memarkrn-play-button").onclick = openGameWindow;
+        document.querySelector("#memarkrn-page-button").onclick = () => {
+          clearInterval(gameWindowWatch);
+          startGame();
+        };
+        showLauncherState("ready");
+        document.body.classList.add("memarkrn-launcher-body");
+        document.querySelector("#memarkrn-launcher").hidden = false;
+      }
+
+      if (isMobile || isGameWindow) startGame();
+      else showLauncher();
 
     </script>
   </body>

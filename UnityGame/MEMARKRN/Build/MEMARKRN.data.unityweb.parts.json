@@ -1,22 +1,22 @@
 {
   "version": 1,
-  "totalBytes": 61831684,
-  "sha256": "aa12b555b9d5b013c994c1a1a91c65e79f55c226e4ce3676e5840de9ed4c5c2b",
+  "totalBytes": 61782952,
+  "sha256": "fb95e214d32f89460c7dfe7712ffa1b5308bea87a59795b854d29ecf33283401",
   "parts": [
     {
-      "url": "MEMARKRN.data.unityweb.aa12b555b9d5.part001.bin",
+      "url": "MEMARKRN.data.unityweb.fb95e214d32f.part001.bin",
       "bytes": 20971520,
-      "sha256": "1f0f1b282e8bcd031a0fb9c64c2fdcbe613f1c594aaf5b37397337e99e9639c1"
+      "sha256": "5ad6aa625d6c3af4e9f46f0cc509e6a7586c161cafd0e103327af802d69c2483"
     },
     {
-      "url": "MEMARKRN.data.unityweb.aa12b555b9d5.part002.bin",
+      "url": "MEMARKRN.data.unityweb.fb95e214d32f.part002.bin",
       "bytes": 20971520,
-      "sha256": "5c25f28c85cc364ada5e8d8488a4cd693b0a3763a139994dfd18bed8fb7e27b0"
+      "sha256": "d91ed6052cc8c1c57eadf39d74c91bf47cb2b3b714fe3742116f80e4af120d82"
     },
     {
-      "url": "MEMARKRN.data.unityweb.aa12b555b9d5.part003.bin",
-      "bytes": 19888644,
-      "sha256": "ceb8c311edc4f280ac30e40a5abd9891b18176b29ad712c48fcdd13c515fe789"
+      "url": "MEMARKRN.data.unityweb.fb95e214d32f.part003.bin",
+      "bytes": 19839912,
+      "sha256": "83eacc7eb0a96fe0b2dc960127df4dc9b7813187086f1708035e9bd7f4decca4"
     }
   ]
 }
