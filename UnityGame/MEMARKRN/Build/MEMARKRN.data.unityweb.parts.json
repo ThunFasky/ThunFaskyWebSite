@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "totalBytes": 61783320,
+  "sha256": "8afc5efe7c2d6db8fe78f1cd67aafc5f3887b53b5fa2abf1a0250cc40a4de7bf",
+  "parts": [
+    {
+      "url": "MEMARKRN.data.unityweb.8afc5efe7c2d.part001.bin",
+      "bytes": 20971520,
+      "sha256": "fa6582c9fac7ff68e6b54083f8d77bce81e0fe37dd002dc653349aac9ce6590f"
+    },
+    {
+      "url": "MEMARKRN.data.unityweb.8afc5efe7c2d.part002.bin",
+      "bytes": 20971520,
+      "sha256": "3324c93cdaf3f21564f021dadd4fc978304af5356a8d2120b1085593fc5d2725"
+    },
+    {
+      "url": "MEMARKRN.data.unityweb.8afc5efe7c2d.part003.bin",
+      "bytes": 19840280,
+      "sha256": "73fd586b65d371438d83b57abba6157f2355fd624ec83e066dcd53cbfaa57212"
+    }
+  ]
+}
