@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "totalBytes": 61784019,
+  "sha256": "2c488fb438edc5bdfbe39ef529724ced5466b0c3056bb56619b1a4fb59ab1b86",
+  "parts": [
+    {
+      "url": "WebGL.data.unityweb.2c488fb438ed.part001.bin",
+      "bytes": 20971520,
+      "sha256": "1995f7626eaed55f0fedada55249c4a82cc5950875c6a5cc0b41cb4c685826d2"
+    },
+    {
+      "url": "WebGL.data.unityweb.2c488fb438ed.part002.bin",
+      "bytes": 20971520,
+      "sha256": "c4a17725a68b6ab0a853de34388c15e160b47a9905adbe13f2a3cdbbe6e6b788"
+    },
+    {
+      "url": "WebGL.data.unityweb.2c488fb438ed.part003.bin",
+      "bytes": 19840979,
+      "sha256": "a2e8ab2aeb1498a89751af9bea14562314d23466bbeddbaec17a596602696e17"
+    }
+  ]
+}
