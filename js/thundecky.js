@@ -37,9 +37,8 @@
     const AUDIO_EXT = /\.(mp3|m4a|aac|ogg|oga|opus|wav|flac|webm)$/i;
     const REPO_CONTENTS_API = 'https://api.github.com/repos/ThunFasky/ThunFaskyWebSite/contents/music';
 
-    // ===== 色（サイトのオレンジと暗い紺に合わせる） =====
-    const rootStyle = getComputedStyle(document.documentElement);
-    const MAIN = parseColor(rootStyle.getPropertyValue('--orange')) || [255, 117, 24];
+    // ===== 色（基本色は黄色 #f7c904、背景はサイトの暗い紺に合わせる） =====
+    const MAIN = parseColor('#f7c904');
     const BG = [14, 19, 33];
     const SHADOW = [4, 6, 12];
     const PANEL_FILL = [8, 11, 20];
