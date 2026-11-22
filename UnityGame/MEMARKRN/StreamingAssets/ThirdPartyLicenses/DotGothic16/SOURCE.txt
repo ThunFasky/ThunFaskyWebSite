@@ -1,0 +1,6 @@
+DotGothic16 Regular (Version 1.100)
+Author: Fontworks Inc. / The DotGothic16 Project Authors
+Source: https://github.com/fontworks-fonts/DotGothic16/
+Local font: Assets/TextMesh Pro/Resources/Fonts & Materials/UserPixelFonts/DotGothic16-Regular.ttf
+SHA-256: FF706AB702FD4446207C70AF564F68B62205C9972F1917F68BA739C61BB6AA18
+License: SIL Open Font License 1.1 (OFL.txt). Copyright line taken from the font's name table.

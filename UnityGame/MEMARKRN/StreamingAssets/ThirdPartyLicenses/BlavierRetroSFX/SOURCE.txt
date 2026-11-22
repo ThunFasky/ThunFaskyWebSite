@@ -1,0 +1,12 @@
+Retro SFX Pack: Variety
+Author: Blavier
+Source: https://blavier.itch.io/blavs-retro-sfx (purchased by the developer)
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+         https://creativecommons.org/licenses/by/4.0/
+         The license is stated on the store page only (the downloaded zip has no license file).
+Modified: the sounds used in this game were trimmed, level-adjusted, converted to mono 44.1 kHz,
+          and one was pitch-shifted (played twice as fast = one octave up).
+
+Attribution: Sound effects from "Retro SFX Pack: Variety" by Blavier
+(https://blavier.itch.io/blavs-retro-sfx), licensed under CC BY 4.0
+(https://creativecommons.org/licenses/by/4.0/). Modified: trimmed, level-adjusted, converted to mono, pitch-shifted.

@@ -1,0 +1,17 @@
+x0y0pxFreeFont by hicc
+Official source: https://hicchicc.github.io/00ff/
+The author's site (checked 2026-11-10) offers the fonts under the SIL Open Font License 1.1 (OFL.txt here).
+The earlier "Original License" (credit optional, bundling with games allowed, no standalone sale) is kept in ../GridGazer/LICENSE.txt.
+
+x16y32pxGridGazer
+  Assets/TextMesh Pro/Resources/Fonts & Materials/x16y32pxGridGazer.ttf
+  SHA-256: DC905AAEC416696AED207D1A7769E93301D3DD4496C936E8F743300F8085B632
+x14y20pxScoreDozer
+  Assets/TextMesh Pro/Resources/Fonts & Materials/x14y20pxScoreDozer.ttf
+  SHA-256: 190AF4E826FE85C47B75D5D9838FF39F69EBFEFABD64A931FFAD4FECA1E92021
+x12y16pxMaruMonica
+  Assets/TextMesh Pro/Resources/Fonts & Materials/UserPixelFonts/x12y16pxMaruMonica.ttf
+  SHA-256: B9C7BE0421167CBA3791B5966C3BF8666D3E6972E7283FB82B6DC0667607DDD4
+x10y12pxDonguriDuel
+  Assets/TextMesh Pro/Resources/Fonts & Materials/UserPixelFonts/x10y12pxDonguriDuel.ttf
+  SHA-256: 92114200D1EBC1C21A157168158BC69A3BAC8A6580AF7C2E551F362FC4B81F65
