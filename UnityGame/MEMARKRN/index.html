@@ -6,7 +6,6 @@
     <title>MEMARKRN</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-      <script src="TemplateData/unity-split-data.js"></script>
   </head>
   <body>
     <!-- 【MEMARKRN 2026-11-01】パソコンの入口：「遊ぶ」でゲームだけの別ウィンドウ（?mode=window）を開く。このページでは Unity を読み込まない -->
@@ -80,16 +79,16 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/MEMARKRN.loader.js";
+      var loaderUrl = buildUrl + "/MEMARKRN WebGL Build v0.1.2.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/MEMARKRN.data.unityweb",
-        frameworkUrl: buildUrl + "/MEMARKRN.framework.js.unityweb",
-        codeUrl: buildUrl + "/MEMARKRN.wasm.unityweb",
+        dataUrl: buildUrl + "/MEMARKRN WebGL Build v0.1.2.data.unityweb",
+        frameworkUrl: buildUrl + "/MEMARKRN WebGL Build v0.1.2.framework.js.unityweb",
+        codeUrl: buildUrl + "/MEMARKRN WebGL Build v0.1.2.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "ThunFasky",
         productName: "MEMARKRN",
-        productVersion: "0.1.1",
+        productVersion: "0.1.2",
         showBanner: unityShowBanner,
         // errorHandler: function(err, url, line) {
         //    alert("error " + err + " occurred at line " + line);
@@ -163,7 +162,7 @@
         var script = document.createElement("script");
         script.src = loaderUrl;
         script.onload = () => {
-          createUnityInstanceWithSplitData(canvas, config, (progress) => {
+          createUnityInstance(canvas, config, (progress) => {
             document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
                 }).then((unityInstance) => {
                   document.querySelector("#unity-loading-bar").style.display = "none";

@@ -1,0 +1,6 @@
+JF Dot K14 Bold (Version 1.00.20150527)
+Converted to TrueType by Jikasei Font Koubou: http://jikasei.me/font/jf-dotfont/
+Local font: Assets/TextMesh Pro/Resources/Fonts & Materials/UserPixelFonts/JF-Dot-K14B.ttf
+SHA-256: 3D37016AB80D552A7D38203722667E0BF04A2AC1C4270FF75D927682C77DA08D
+License: public domain. The author's page (checked 2026-11-10) lists the K12/K14 bitmap fonts as public domain,
+with the half-width part from Shinonome Gothic 16 (Shinonome bitmap font family, also public domain).
